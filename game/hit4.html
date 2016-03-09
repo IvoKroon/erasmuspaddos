@@ -45,7 +45,7 @@
     <div id="wrapper">
         <div id="stage"></div>
         <div id="plate"></div>
-        <canvas id="strings" width="400px" height="1300px"/>
+        <canvas id="strings" width="400px" height="600px"/>
     </div>
 
     <script>
@@ -301,7 +301,7 @@
                 this.y + Math.sin(this.a) * this._strumForce,
 
                 this.x,
-                this.x
+                this.x + this.height
         );
         ctx.stroke();
         
