@@ -38,32 +38,14 @@
             left: 0;
             z-index: 9;
         }
-        
-        #plate {
-            position: relative;
-            top: 0;
-            left: 178px;
-            width: 270px;
-            height: 220px;
-            background: url(../../../../Downloads/jam_examples/plate.png) center center no-repeat;
-        }
 
     </style>
 </head>
 <body>
-    <h3>JAM with Chrome Demo</h3>
-    <div> 
-        <a href="../../../../Downloads/jam_examples/index.html">Example 1</a> |
-        <a href="../../../../Downloads/jam_examples/hit2.html">Example 2</a> |
-        <a href="../../../../Downloads/jam_examples/hit3.html">Example 3</a> |
-        Example 4
-    
-    </div>
-    
     <div id="wrapper">
         <div id="stage"></div>
         <div id="plate"></div>
-        <canvas id="strings" width="400px" height="300px"/>
+        <canvas id="strings" width="400px" height="1300px"/>
     </div>
 
     <script>
@@ -147,7 +129,7 @@
           if (!_self.dragging || _self.limit) return;
           _self.limit = true;
       
-          x = e.clientX - _self.positionTop,
+          x = e.clientX - _self.positionTop;
           y = e.clientY - _self.positionLeft;
       
       
@@ -167,13 +149,12 @@
         }, false);
         
         document.addEventListener('mouseover', function(e) {
-//            console.log('data');
           var x, y;
           
           if (!_self.dragging) return;
           _self.dragging = false;
           
-          x = e.clientX - _self.positionTop,
+          x = e.clientX - _self.positionTop;
           y = e.clientY - _self.positionLeft;
         
           _self.hitZones.forEach(function(zone) {
@@ -252,7 +233,8 @@
         this.middle = [
             {x: this.x, y: this.y + this.height / 2},
             {x: this.x + this.width, y: this.y + this.height / 2}
-        ]
+        ];
+
         return this.middle;
       };
       
@@ -295,36 +277,43 @@
       
       function GuitarString(rect) {
           this.x = rect.x;
-          this.y = rect.y + rect.height / 2;
+          this.y = rect.y;
           this.width = rect.width;
+          this.height = rect.height;
           this._strumForce = 0;
           this.a = 0;
       }
       
       GuitarString.prototype.strum = function() {
-        this._strumForce = 5;
+        this._strumForce = 10;
       };
       
-      GuitarString.prototype.render = function(ctx, canvas) {
+      GuitarString.prototype.render = function(ctx) {
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.bezierCurveTo(
-                this.x, this.y + Math.sin(this.a) * this._strumForce,
-                this.x + this.width, this.y + Math.sin(this.a) * this._strumForce,
-                this.x + this.width, this.y);
+                this.x,
+                this.y,
+
+                this.x + Math.sin(this.a) * this._strumForce,
+                this.y + Math.sin(this.a) * this._strumForce,
+
+                this.x,
+                this.x
+        );
         ctx.stroke();
         
         this._strumForce *= 0.99;
-        this.a += 0.5;
+        this.a += 0.8;
       };
       
       
-      function StringInstrument(stageID, canvasID, stringNum){
+      function StringInstrument(stageID, canvasID, stringNum) {
           this.strings = [];
-          this.canvas = document.getElementById(canvasID);
           this.stage = new Stage(stageID);
+          this.canvas = document.getElementById(canvasID);
           this.ctx = this.canvas.getContext('2d');
           this.stringNum = stringNum;
       
@@ -336,7 +325,7 @@
       
       StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
-          var srect = new Rect(10, 90 + i * 15, 380, 5);
+          var srect = new Rect(10 + i * 25, 90, 50, 650);
           var s = new GuitarString(srect);
           this.stage.addString(srect, s);
           this.strings.push(s);
@@ -346,7 +335,7 @@
       StringInstrument.prototype.render = function() {
         var _self = this;
         
-        requestAnimFrame(function(){
+        requestAnimFrame(function() {
           _self.render();
         });
         
@@ -358,7 +347,7 @@
       };
       
       
-      var guitar = new StringInstrument("stage", "strings", 6);
+      var guitar = new StringInstrument("stage", "strings", 16);
     
     </script>
 </body>

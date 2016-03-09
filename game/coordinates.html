@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h1>Coordinates</h1>
+<h1>TEST AREA</h1>
 <canvas id="displayArea" width="500" height="400" style="background:#dddddd;"></canvas>
 <div id="output"></div>
 <div id="hands"></div>
@@ -62,6 +62,8 @@
 
                 // loop through all objects and displayAreas
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+
+                    // refresh
                     for (var k in shapes) {
                         shape = shapes[k];
                         displayArea.fillStyle = shape.fill;
@@ -97,6 +99,7 @@
                         for (k in shapes) {
                             shape = shapes[k];
 
+                            // check if we are hovering over a button
                             var isCorrectlyHovering = false;
 
                             if (x >= shape.x && x <= shape.x + shape.width) {
@@ -119,8 +122,8 @@
 
                 handsString = "";
                 handsString += "hands: " + frame.hands.length + "<br />";
-                handsString += "hand[0] coords: x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
-                handsString += "hand[1] coords: x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
+                handsString += "hand[0] x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
+                handsString += "hand[1] x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
                 hands.innerHTML = handsString;
             }
         }
