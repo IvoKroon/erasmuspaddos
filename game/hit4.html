@@ -228,7 +228,8 @@
       };
       
       Rect.prototype.midLine = function() {
-        if (this.middle) return this.middle;
+        if (this.middle)
+            return this.middle;
     
         this.middle = [
             {x: this.x, y: this.y + this.height / 2},
@@ -325,7 +326,7 @@
       
       StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
-          var srect = new Rect(10 + i * 25, 90, 50, 650);
+          var srect = new Rect(10 + i * 25, 90, 10, 650);
           var s = new GuitarString(srect);
           this.stage.addString(srect, s);
           this.strings.push(s);
