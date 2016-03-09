@@ -295,14 +295,14 @@
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.bezierCurveTo(
-                this.x,
-                this.y,
-
                 this.x + Math.sin(this.a) * this._strumForce,
-                this.y + Math.sin(this.a) * this._strumForce,
+                this.y + this.height / 2,
+
+                this.x  + Math.sin(this.a) * this._strumForce,
+                this.y + this.height / 2,
 
                 this.x,
-                this.x + this.height
+                this.y + this.height
         );
         ctx.stroke();
         
@@ -326,7 +326,7 @@
       
       StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
-          var srect = new Rect(10 + i * 25, 90, 10, 650);
+          var srect = new Rect(10 + i * 25, 90, 10, 350);
           var s = new GuitarString(srect);
           this.stage.addString(srect, s);
           this.strings.push(s);
