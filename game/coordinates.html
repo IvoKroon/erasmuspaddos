@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>coords</title>
+
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<h1>Coordinates</h1>
+<div id="output"></div>
+<div id="hands"></div>
+<canvas id="displayArea" width="500" height="400" style="background:#dddddd;"></canvas>
+
+</body>
+
+<script src="//js.leapmotion.com/leap-0.6.4.js"></script>
+<script>
+var canvasElement = document.getElementById("displayArea");
+var displayArea = canvasElement.getContext("2d");
+var displayAreas = [];
+var displayOpacity;
+
+var hand, interactionBox, normalizedPosition;
+var handInfo = [[0, 0, 0], [0, 0, 0]];
+var canvasX, canvasY, canvasZ;
+var controller = new Leap.Controller();
+
+controller.on("frame", function(frame){
+    if(frame.pointables.length > 0)
+    {
+        var output = document.getElementById('output');
+
+        // use all hands
+        for (var i = 0, len = frame.hands.length; i < len; i++) {
+            canvasElement.width = canvasElement.width; //clear
+
+            //Get a pointable and normalize the tip position
+            hand = frame.hands[i];
+            interactionBox = frame.interactionBox;
+            normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
+
+            // Convert the normalized coordinates to span the canvas
+            handInfo[i][0] = canvasElement.width * normalizedPosition[0];
+            handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
+            handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
+
+
+            // X and Y coordinates follow circle
+//        displayArea.strokeText("(" + canvasX.toFixed(1) + ", " + canvasY.toFixed(1) + ")", canvasX, canvasY);
+
+            for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+                if (handInfo[j][0] > 0 && handInfo[j][0] < 500 && handInfo[j][2] < 900) {
+                    var x = handInfo[j][0];
+                    var y = handInfo[j][1];
+                    var z = handInfo[j][2];
+
+                    displayArea.beginPath();
+                    displayArea.arc(x, y, 25, 25, 0, 2 * Math.PI);
+
+                    displayOpacity = 1.72 - 0.0018 * z;
+
+                    displayArea.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
+                    displayArea.fill();
+
+                    if (displayOpacity >= 1) {
+                        displayArea.fillStyle = "rgba(0, 255, 150, 1)";
+                        displayArea.fill();
+                    }
+                }
+            }
+
+            handsString = "";
+            handsString += "hands: " + frame.hands.length + "<br />";
+            handsString += "hand[0] coords: x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
+            handsString += "hand[1] coords: x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
+            hands.innerHTML = handsString;
+
+        }
+    }
+});
+controller.connect();
+
+</script>
+
+</html>
