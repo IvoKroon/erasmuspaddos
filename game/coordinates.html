@@ -9,34 +9,56 @@
 <body>
 
 <h1>Coordinates</h1>
+<canvas id="displayArea" width="500" height="400" style="background:#dddddd;"></canvas>
 <div id="output"></div>
 <div id="hands"></div>
-<canvas id="displayArea" width="500" height="400" style="background:#dddddd;"></canvas>
 
 </body>
 
 <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
 <script>
+// shape constructor
+function Shape(x, y, z, width, height, fill) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.width = width;
+    this.height = height;
+    this.fill = fill;
+}
+
+var output = document.getElementById('output');
+
 var canvasElement = document.getElementById("displayArea");
 var displayArea = canvasElement.getContext("2d");
 var displayAreas = [];
 var displayOpacity;
 
-var hand, interactionBox, normalizedPosition;
+var interactionBox, normalizedPosition;
+var hand, canvasX, canvasY, canvasZ;
 var handInfo = [[0, 0, 0], [0, 0, 0]];
-var canvasX, canvasY, canvasZ;
-var controller = new Leap.Controller();
 
+//displayArea.beginPath();
+//displayArea.rect(canvasElement.width/2-50, canvasElement.height/2-50, 100, 100);
+//displayArea.fillStyle = "rgba(255, 0, 0, 1)";
+//displayArea.fill();
+
+var shapes = [];
+shapes.push(new Shape(canvasElement.width/2-50, canvasElement.height/2-50, 0, 100, 100, "rgba(255, 0, 0, 1)"));
+shapes.push(new Shape(canvasElement.width-100, canvasElement.height-100, 0, 100, 100, "rgba(0, 255, 0, 1)"));
+
+
+// leap motion loop
+var controller = new Leap.Controller();
 controller.on("frame", function(frame){
     if(frame.pointables.length > 0)
     {
-        var output = document.getElementById('output');
-
-        // use all hands
+        // use all hands we see in frame
         for (var i = 0, len = frame.hands.length; i < len; i++) {
-            canvasElement.width = canvasElement.width; //clear
+            //clear
+            canvasElement.width = canvasElement.width;
 
-            //Get a pointable and normalize the tip position
+            //Get a pointable (hand) and normalize the index finger's dip position
             hand = frame.hands[i];
             interactionBox = frame.interactionBox;
             normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
@@ -46,24 +68,34 @@ controller.on("frame", function(frame){
             handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
             handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
 
-
-            // X and Y coordinates follow circle
-//        displayArea.strokeText("(" + canvasX.toFixed(1) + ", " + canvasY.toFixed(1) + ")", canvasX, canvasY);
-
+            // loop through all objects and displayAreas
             for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
-                if (handInfo[j][0] > 0 && handInfo[j][0] < 500 && handInfo[j][2] < 900) {
+                for (var i in shapes) {
+                    shape = shapes[i];
+                    displayArea.fillStyle = shape.fill;
+                    displayArea.fillRect(shape.x, shape.y, shape.width, shape.height);
+                }
+
+                // only display within the canvas area
+                if (handInfo[j][0] > 0 &&
+                    handInfo[j][0] < canvasElement.width &&
+                    handInfo[j][2] < 900)
+                {
                     var x = handInfo[j][0];
                     var y = handInfo[j][1];
                     var z = handInfo[j][2];
 
+                    // create circle and position it
                     displayArea.beginPath();
                     displayArea.arc(x, y, 25, 25, 0, 2 * Math.PI);
 
+                    // set opacity according to Z value
                     displayOpacity = 1.72 - 0.0018 * z;
 
                     displayArea.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
                     displayArea.fill();
 
+                    // make circle green if we are in the "touch area"
                     if (displayOpacity >= 1) {
                         displayArea.fillStyle = "rgba(0, 255, 150, 1)";
                         displayArea.fill();
@@ -76,7 +108,6 @@ controller.on("frame", function(frame){
             handsString += "hand[0] coords: x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
             handsString += "hand[1] coords: x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
             hands.innerHTML = handsString;
-
         }
     }
 });
