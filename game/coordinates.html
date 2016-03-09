@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>coords</title>
-
-    <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
 
@@ -17,101 +15,117 @@
 
 <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
 <script>
-// shape constructor
-function Shape(x, y, z, width, height, fill) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.width = width;
-    this.height = height;
-    this.fill = fill;
-}
+    // shape constructor
+    function Shape(x, y, z, width, height, fill) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.width = width;
+        this.height = height;
+        this.fill = fill;
+    }
 
-var output = document.getElementById('output');
+    var output = document.getElementById('output');
 
-var canvasElement = document.getElementById("displayArea");
-var displayArea = canvasElement.getContext("2d");
-var displayAreas = [];
-var displayOpacity;
+    var canvasElement = document.getElementById("displayArea");
+    var displayArea = canvasElement.getContext("2d");
+    var displayAreas = [];
+    var displayOpacity;
 
-var interactionBox, normalizedPosition;
-var hand, canvasX, canvasY, canvasZ;
-var handInfo = [[0, 0, 0], [0, 0, 0]];
+    var interactionBox, normalizedPosition;
+    var hand, canvasX, canvasY, canvasZ;
+    var handInfo = [[0, 0, 0], [0, 0, 0]];
 
-//displayArea.beginPath();
-//displayArea.rect(canvasElement.width/2-50, canvasElement.height/2-50, 100, 100);
-//displayArea.fillStyle = "rgba(255, 0, 0, 1)";
-//displayArea.fill();
+    var shapes = [];
+    shapes.push(new Shape(canvasElement.width/2-50, canvasElement.height/2-50, 0, 100, 100, "rgba(255, 0, 0, 1)"));
+    shapes.push(new Shape(canvasElement.width-100, canvasElement.height-100, 0, 100, 100, "rgba(255, 0, 0, 1)"));
 
-var shapes = [];
-shapes.push(new Shape(canvasElement.width/2-50, canvasElement.height/2-50, 0, 100, 100, "rgba(255, 0, 0, 1)"));
-shapes.push(new Shape(canvasElement.width-100, canvasElement.height-100, 0, 100, 100, "rgba(0, 255, 0, 1)"));
+    // leap motion loop
+    var controller = new Leap.Controller();
+    controller.on("frame", function(frame){
+        if(frame.pointables.length > 0)
+        {
+            // use all hands we see in frame
+            for (var i = 0, len = frame.hands.length; i < len; i++) {
+                //clear
+                canvasElement.width = canvasElement.width;
 
+                //Get a pointable (hand) and normalize the index finger's dip position
+                hand = frame.hands[i];
+                interactionBox = frame.interactionBox;
+                normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
-// leap motion loop
-var controller = new Leap.Controller();
-controller.on("frame", function(frame){
-    if(frame.pointables.length > 0)
-    {
-        // use all hands we see in frame
-        for (var i = 0, len = frame.hands.length; i < len; i++) {
-            //clear
-            canvasElement.width = canvasElement.width;
+                // Convert the normalized coordinates to span the canvas
+                handInfo[i][0] = canvasElement.width * normalizedPosition[0];
+                handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
+                handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
 
-            //Get a pointable (hand) and normalize the index finger's dip position
-            hand = frame.hands[i];
-            interactionBox = frame.interactionBox;
-            normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
+                // loop through all objects and displayAreas
+                for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+                    for (var k in shapes) {
+                        shape = shapes[k];
+                        displayArea.fillStyle = shape.fill;
+                        displayArea.fillRect(shape.x, shape.y, shape.width, shape.height);
+                    }
 
-            // Convert the normalized coordinates to span the canvas
-            handInfo[i][0] = canvasElement.width * normalizedPosition[0];
-            handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
-            handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
+                    // only display within the canvas area
+                    if (handInfo[j][0] > 0 &&
+                            handInfo[j][0] < canvasElement.width &&
+                            handInfo[j][2] < 900)
+                    {
+                        var x = handInfo[j][0];
+                        var y = handInfo[j][1];
+                        var z = handInfo[j][2];
 
-            // loop through all objects and displayAreas
-            for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
-                for (var i in shapes) {
-                    shape = shapes[i];
-                    displayArea.fillStyle = shape.fill;
-                    displayArea.fillRect(shape.x, shape.y, shape.width, shape.height);
-                }
+                        // create circle and position it
+                        displayArea.beginPath();
+                        displayArea.arc(x, y, 25, 25, 0, 2 * Math.PI);
+//                        displayArea.globalCompositeOperation = 'destination-over';
 
-                // only display within the canvas area
-                if (handInfo[j][0] > 0 &&
-                    handInfo[j][0] < canvasElement.width &&
-                    handInfo[j][2] < 900)
-                {
-                    var x = handInfo[j][0];
-                    var y = handInfo[j][1];
-                    var z = handInfo[j][2];
+                        // set opacity according to Z value
+                        displayOpacity = 1.72 - 0.0018 * z;
 
-                    // create circle and position it
-                    displayArea.beginPath();
-                    displayArea.arc(x, y, 25, 25, 0, 2 * Math.PI);
-
-                    // set opacity according to Z value
-                    displayOpacity = 1.72 - 0.0018 * z;
-
-                    displayArea.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
-                    displayArea.fill();
-
-                    // make circle green if we are in the "touch area"
-                    if (displayOpacity >= 1) {
-                        displayArea.fillStyle = "rgba(0, 255, 150, 1)";
+                        displayArea.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
                         displayArea.fill();
+
+                        // make circle green if we are in the "touch area"
+                        if (displayOpacity >= 1) {
+                            displayArea.fillStyle = "rgba(0, 255, 150, 1)";
+                            displayArea.fill();
+                        }
+
+                        for (k in shapes) {
+                            shape = shapes[k];
+
+                            var isCorrectlyHovering = false;
+
+                            if (x >= shape.x && x <= shape.x + shape.width) {
+                                if (y >= shape.y && y <= shape.y + shape.height) {
+                                    if (z <= 400) {
+                                        isCorrectlyHovering = true;
+                                    }
+                                }
+                            }
+
+                            // if circle is in box and we are at correct Z level, button turns blue
+                            if (isCorrectlyHovering) {
+                                shape.fill = "rgba(0, 0, 255, 1)";
+                            } else {
+                                shape.fill = "rgba(255, 0, 0, 1)";
+                            }
+                        }
                     }
                 }
-            }
 
-            handsString = "";
-            handsString += "hands: " + frame.hands.length + "<br />";
-            handsString += "hand[0] coords: x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
-            handsString += "hand[1] coords: x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
-            hands.innerHTML = handsString;
+                handsString = "";
+                handsString += "hands: " + frame.hands.length + "<br />";
+                handsString += "hand[0] coords: x: " + handInfo[0][0].toFixed(0) + " y: " + handInfo[0][1].toFixed(0) + " z: " + handInfo[0][2].toFixed(0) + "<br />";
+                handsString += "hand[1] coords: x: " + handInfo[1][0].toFixed(0) + " y: " + handInfo[1][1].toFixed(0) + " z: " + handInfo[1][2].toFixed(0);
+                hands.innerHTML = handsString;
+            }
         }
-    }
-});
-controller.connect();
+    });
+    controller.connect();
 
 </script>
 
