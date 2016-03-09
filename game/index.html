@@ -3,8 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .stage {
+            position: absolute;
+            width: 400px;
+            height: 200px;
+            background: rgba(0,0,0,.1);
+            z-index: 10;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .stage.active,
+        .fullstage.active {
+            cursor: pointer;
+        }
+
+        .fullstage {
+            position: absolute;
+            width: 400px;
+            height: 220px;
+            z-index: 10;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        </style>
 </head>
 <body>
+<h1>test</h1>
+
+<div class="wrapper tall">
+    <div id="stage-4" class="fullstage"></div>
+    <div id="plate"></div>
+    <canvas id="strings" width="400px" height="220px">
+    </canvas>
+</div>
 
 </body>
 </html>
