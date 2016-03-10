@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>JAM with Chrome Demo</title>
+    <title>Strings Test</title>
     <style type="text/css">
 
         * {
@@ -9,7 +9,7 @@
         }
 
         body {
-            background-color: #000000;
+            background-color: #101010;
             height: 100%;
             color: #424242;
             text-align: center;
@@ -45,7 +45,7 @@
 <body>
     <div id="wrapper">
         <div id="stage"></div>
-        <canvas id="strings" width="1280px" height="700px" style="background:#000000;"></canvas>
+        <canvas id="strings" width="1280px" height="700px" style="background:#101010;"></canvas>
     </div>
 
     <script>
@@ -94,9 +94,6 @@
             _y += el.offsetTop;
             el = el.offsetParent;
           }
-
-          console.log("_x = " + _x + "_y = " + _y);
-          console.log("a");
 
           return { top: _y - window.scrollY, left: _x - window.scrollX };
         }
@@ -149,7 +146,7 @@
       
           setInterval(function() {
             _self.limit = false;
-          }, 5);
+          }, 50);
         }, false);
         
         document.addEventListener('mouseover', function(e) {
@@ -296,8 +293,7 @@
           var green = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128);
           var blue  = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
 
-          c = "rgb(" + red + "," + green + "," + blue + ")";
-          return c;
+          return "rgb(" + red + "," + green + "," + blue + ")";
       };
       
       GuitarString.prototype.render = function(ctx, stringNum) {
