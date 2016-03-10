@@ -48,255 +48,258 @@
         <canvas id="strings" width="1280px" height="700px" style="background:#101010;"></canvas>
     </div>
 
-    <script>
-      // Shim by Paul Irish
-      // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-      window.requestAnimFrame = (function() {
-          return  window.requestAnimationFrame ||
-                  window.webkitRequestAnimationFrame ||
-                  window.mozRequestAnimationFrame ||
-                  window.oRequestAnimationFrame ||
-                  window.msRequestAnimationFrame ||
-                  function(callback) {
-                      window.setTimeout(callback, 1000 / 60);
-                  };
-      })();
+<script>
+    window.requestAnimFrame = (function() {
+      return  window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              window.oRequestAnimationFrame ||
+              window.msRequestAnimationFrame ||
+              function(callback) {
+                  window.setTimeout(callback, 1000 / 60);
+              };
+    })();
 
 
 
 
-      function Stage(id) {
+    function Stage(id) {
         this.el = document.getElementById(id);
-        
         this.position();
         this.listeners();
         this.hitZones = [];
+
         return this;
-      }
-      
-      Stage.prototype.position = function() {
+    }
+
+    Stage.prototype.position = function() {
         var offset = this.offset();
         this.positionTop = Math.floor(offset.left);
         this.positionLeft = Math.floor(offset.top);
-      };
-      
-      Stage.prototype.offset = function() { 
+    };
+
+    Stage.prototype.offset = function() {
         var _x, _y,
             el = this.el;
-        
+
         if (typeof el.getBoundingClientRect !== "undefined") {
-          return el.getBoundingClientRect();
+            return el.getBoundingClientRect();
         } else {
-          _x = 0;
-          _y = 0;
-          while(el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
-            _x += el.offsetLeft;
-            _y += el.offsetTop;
-            el = el.offsetParent;
-          }
+            _x = 0;
+            _y = 0;
 
-          return { top: _y - window.scrollY, left: _x - window.scrollX };
+            while(el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+                _x += el.offsetLeft;
+                _y += el.offsetTop;
+                el = el.offsetParent;
+            }
+
+            return { top: _y - window.scrollY, left: _x - window.scrollX };
         }
-      };
-      
-      Stage.prototype.listeners = function() {
-        var _self = this;
-        
-        _self.dragging = false;
-        _self.limit = false;
-        
+    };
+
+    Stage.prototype.listeners = function() {
+        var that = this;
+
+        that.dragging = false;
+        that.limit = false;
+
+
         window.addEventListener('resize', function() {
-          _self.position();
+            that.position();
         }, false);
-        
+
+
         window.addEventListener('scroll', function() {
-          _self.position();
+            that.position();
         }, false);
-        
+
+
         this.el.addEventListener('mousemove', function(e) {
-          var x = e.clientX - _self.positionTop,
-              y = e.clientY - _self.positionLeft;
-      
-          _self.hitZones.forEach(function(zone) {
-              _self.checkPoint(x, y, zone);
-          });
-      
-          _self.dragging = true;
-          _self.prev = [x, y];
+            var x = e.clientX - that.positionTop,
+                y = e.clientY - that.positionLeft;
+
+            that.hitZones.forEach(function(zone) {
+                that.checkPoint(x, y, zone);
+            });
+
+            that.dragging = true;
+            that.prev = [x, y];
         }, false);
-        
-        
+
+
         document.addEventListener('mousemove', function(e) {
-          var x, y;
-      
-          if (!_self.dragging || _self.limit)
-              return;
+            var x, y;
 
-          _self.limit = true;
-      
-          x = e.clientX - _self.positionTop;
-          y = e.clientY - _self.positionLeft;
-      
-      
-          _self.hitZones.forEach(function(zone) {
-            _self.checkIntercept(_self.prev[0], _self.prev[1], x, y, zone);
-          });
-      
-          _self.prev = [x, y];
-      
-          setInterval(function() {
-            _self.limit = false;
-          }, 50);
+            if (!that.dragging || that.limit)
+                return;
+
+            that.limit = true;
+
+            x = e.clientX - that.positionTop;
+            y = e.clientY - that.positionLeft;
+
+            that.hitZones.forEach(function(zone) {
+                that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
+            });
+
+            that.prev = [x, y];
+
+
+            setInterval(function() {
+                that.limit = false;
+            }, 50);
         }, false);
-        
+
+
         document.addEventListener('mouseover', function(e) {
-          var x, y;
-          
-          if (!_self.dragging) return;
-          _self.dragging = false;
-          
-          x = e.clientX - _self.positionTop;
-          y = e.clientY - _self.positionLeft;
-        
-          _self.hitZones.forEach(function(zone) {
-            _self.checkIntercept(_self.prev[0], _self.prev[1], x, y, zone);
-          });
+            var x, y;
+
+            if (!that.dragging)
+                return;
+
+            that.dragging = false;
+
+            x = e.clientX - that.positionTop;
+            y = e.clientY - that.positionLeft;
+
+            that.hitZones.forEach(function(zone) {
+                that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
+            });
         }, false);
-      };
-      
-      Stage.prototype.check = function(x, y, zone) {
-        if(!zone.el) return;
-      
-        if(zone.inside(x, y)){
-          zone.el.classList.add('hit');
-          this.el.classList.add('active');
-        }else{
-          zone.el.classList.remove('hit');
-          this.el.classList.remove('active');
+    };
+
+    Stage.prototype.check = function(x, y, zone) {
+        if (!zone.el)
+            return;
+
+        if (zone.inside(x, y)){
+            zone.el.classList.add('hit');
+            this.el.classList.add('active');
+        } else {
+            zone.el.classList.remove('hit');
+            this.el.classList.remove('active');
         }
-      };
-      
-      Stage.prototype.addRect = function(id) {
+    };
+
+    Stage.prototype.addRect = function(id) {
         var el = document.getElementById(id),
-            rect = new Rect(el.offsetLeft, 
-                            el.offsetTop, 
-                            el.offsetWidth, 
-                            el.offsetHeight  
-                            );
+            rect = new Rect(el.offsetLeft,
+                            el.offsetTop,
+                            el.offsetWidth,
+                            el.offsetHeight
+                       );
         rect.el = el;
-      
+
         this.hitZones.push(rect);
+
         return rect;
-      };
-  
-      Stage.prototype.addString = function(rect, string) {
+    };
+
+    Stage.prototype.addString = function(rect, string) {
         rect.string = string;
-        
+
         this.hitZones.push(rect);
         return rect;
-      }; 
-      
-      Stage.prototype.checkPoint = function(x, y, zone) {
-        if(zone.inside(x, y)) {
-          zone.string.strum();
+    };
+
+    Stage.prototype.checkPoint = function(x, y, zone) {
+        if (zone.inside(x, y)) {
+            zone.string.strum();
         }
-      };  
-      
-      Stage.prototype.checkIntercept = function(x1, y1, x2, y2, zone) {
-         if(zone.intercept(x1, y1, x2, y2)) {
-          zone.string.strum();
-         }
-       }; 
-  
+    };
+
+    Stage.prototype.checkIntercept = function(x1, y1, x2, y2, zone) {
+        if (zone.intercept(x1, y1, x2, y2)) {
+            zone.string.strum();
+        }
+    };
 
 
-      function Rect(x, y, width, height) {
+
+
+    function Rect(x, y, width, height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-          
+
         return this;
-      }
-      
-      Rect.prototype.inside = function(x,y) {
+    }
+
+    Rect.prototype.inside = function(x,y) {
         return x >= this.x && y >= this.y
-            && x <= this.x + this.width
-            && y <= this.y + this.height;
-      };
-      
-      Rect.prototype.midLine = function() {
+                 && x <= this.x + this.width
+                 && y <= this.y + this.height;
+    };
+
+    Rect.prototype.midLine = function() {
         if (this.middle)
             return this.middle;
-    
+
         this.middle = [
             {x: this.x, y: this.y + this.height / 2},
             {x: this.x + this.width, y: this.y + this.height / 2}
         ];
 
         return this.middle;
-      };
-      
-      Rect.prototype.intercept = function(x1, y1, x2, y2) {
-        var result = false,
-                segment = this.midLine(),
-                start = {x: x1, y: y1},
-                end = {x: x2, y: y2};
-        
+    };
+
+    Rect.prototype.intercept = function(x1, y1, x2, y2) {
+        var segment = this.midLine(),
+            start = {x: x1, y: y1},
+            end = {x: x2, y: y2};
+
         return this.intersectLine(segment[0], segment[1], start, end);
-      };
-      
-      Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
-        //-- http://www.kevlindev.com/gui/math/intersection/Intersection.js
-        var result;
-        var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
-        var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
-        var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
-    
+    };
+
+    //-- http://www.kevlindev.com/gui/math/intersection/Intersection.js
+    Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
+        var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x),
+            ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x),
+            u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+
         if (u_b != 0) {
-          var ua = ua_t / u_b;
-          var ub = ub_t / u_b;
-  
-          if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
-              result = true;
-          } else {
-              result = false; //--"No Intersection"
-          }
+            var ua = ua_t / u_b,
+                ub = ub_t / u_b;
+
+            if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
+                return ua + ub;
+            }
         } else {
-          if (ua_t == 0 || ub_t == 0) {
-              result = false; //-- Coincident"
-          } else {
-              result = false; //-- Parallel
-          }
+            if (ua_t == 0 || ub_t == 0) {
+                return false;   //-- Coincident
+            } else {
+                return false;   //-- Parallel
+            }
         }
-    
-        return result;
-      };
-      
+    };
 
 
-      function GuitarString(rect) {
-          this.x = rect.x;
-          this.y = rect.y;
-          this.width = rect.width;
-          this.height = rect.height;
-          this._strumForce = 0;
-          this.a = 0;
-      }
-      
-      GuitarString.prototype.strum = function() {
+
+
+    function HarpString(rect) {
+        this.x = rect.x;
+        this.y = rect.y;
+        this.width = rect.width;
+        this.height = rect.height;
+        this._strumForce = 0;
+        this.a = 0;
+    }
+
+    HarpString.prototype.strum = function() {
         this._strumForce = 20;
-      };
+    };
 
-      GuitarString.prototype.stringColor = function(stringNum) {
-          var red   = Math.floor(Math.sin(.3 * stringNum + 2) * 127 + 128);
-          var green = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128);
-          var blue  = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
+    HarpString.prototype.stringColor = function(stringNum) {
+        var red   = Math.floor(Math.sin(.3 * stringNum + 2) * 127 + 128),
+            green = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128),
+            blue  = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
 
-          return "rgb(" + red + "," + green + "," + blue + ")";
-      };
-      
-      GuitarString.prototype.render = function(ctx, stringNum) {
+        return "rgb(" + red + "," + green + "," + blue + ")";
+    };
+
+    HarpString.prototype.render = function(ctx, stringNum) {
         ctx.strokeStyle = this.stringColor(stringNum);
         ctx.lineWidth = 10;
         ctx.beginPath();
@@ -304,66 +307,66 @@
         // start point
         ctx.moveTo(this.x, this.y);
         ctx.bezierCurveTo(
-                // first curve point
-                this.x + Math.sin(this.a) * this._strumForce,
-                this.y + this.height * 0.3,
+            // first curve point
+            this.x + Math.sin(this.a) * this._strumForce,
+            this.y + this.height * 0.3,
 
-                // second curve point
-                this.x  + Math.sin(this.a) * this._strumForce,
-                this.y + this.height * 0.6,
+            // second curve point
+            this.x + Math.sin(this.a) * this._strumForce,
+            this.y + this.height * 0.6,
 
-                // end point
-                this.x,
-                this.y + this.height
+            // end point
+            this.x,
+            this.y + this.height
         );
         ctx.stroke();
-        
+
         this._strumForce *= 0.99;
         this.a += 0.8;
-      };
-      
+    };
 
 
-      function StringInstrument(stageID, canvasID, stringNum) {
-          this.strings = [];
-          this.stage = new Stage(stageID);
-          this.canvas = document.getElementById(canvasID);
-          this.ctx = this.canvas.getContext('2d');
-          this.stringNum = stringNum;
-      
-          this.create();
-          this.render();
-      
-          return this;
-      }
-      
-      StringInstrument.prototype.create = function() {
+
+
+    function StringInstrument(stageID, canvasID, stringNum) {
+        this.strings = [];
+        this.stage = new Stage(stageID);
+        this.canvas = document.getElementById(canvasID);
+        this.ctx = this.canvas.getContext('2d');
+        this.stringNum = stringNum;
+
+        this.create();
+        this.render();
+
+        return this;
+    }
+
+    StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
-          var srect = new Rect(50 + i * 78, 0, 10, 700);
-          var s = new GuitarString(srect);
-          this.stage.addString(srect, s);
-          this.strings.push(s);
+            var srect = new Rect(50 + i * 78, 0, 10, 700);
+            var s     = new HarpString(srect);
+
+            this.stage.addString(srect, s);
+            this.strings.push(s);
         }
-      };
-      
-      StringInstrument.prototype.render = function() {
-        var _self = this;
-        
+    };
+
+    StringInstrument.prototype.render = function() {
+        var that = this;
+
         requestAnimFrame(function() {
-          _self.render();
+            that.render();
         });
-        
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         for (var i = 0; i < this.stringNum; i++) {
-          this.strings[i].render(this.ctx, i);
+            this.strings[i].render(this.ctx, i);
         }
-      };
-      
-      
-      var guitar = new StringInstrument("stage", "strings", 16);
-    
-    </script>
+    };
+
+    var harp = new StringInstrument("stage", "strings", 16);
+</script>
 </body>
 
 </html>

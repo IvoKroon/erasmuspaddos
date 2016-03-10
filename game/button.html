@@ -49,14 +49,14 @@
     };
 
     Button.prototype.fillColor = function() {
-        var cs    = this.fill;
-        var rgb   = cs.substring(cs.indexOf('(') + 1, cs.lastIndexOf(')')).split(/,\s*/),
+        var cs    = this.fill,
+            rgb   = cs.substring(cs.indexOf('(') + 1, cs.lastIndexOf(')')).split(/,\s*/),
             red   = parseInt(rgb[0]),
             green = parseInt(rgb[1]),
             blue  = parseInt(rgb[2]);
 
-        if (red > 0)     red -= 3;
-        if (green < 255) green += 3;
+        red = (red > 0) ? red -= 9 : red = 0;
+        green = (green < 200) ? green += 3 : green = 200;
 
         var colorString = "";
         colorString += "red: "   + red   + "<br />";
@@ -83,10 +83,9 @@
 
     Menu.prototype.create = function() {
         for (var i = 0; i < this.buttonNum; i++) {
-            var x = this.canvas.width/2 - (75*i);
-            var y = 100;
-
-            var b = new Button(x, y, 50, 50, "rgba(255, 0, 0, 1)");
+            var x = this.canvas.width/2 - (75*i),
+                y = 100,
+                b = new Button(x, y, 50, 50, "rgba(255, 0, 0, 1)");
 
             this.buttons.push(b);
         }
