@@ -32,7 +32,6 @@
     HarpString.prototype.render = function(ctx) {
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
-//        ctx.lineTo(this.x, this.y + this.height);
         ctx.bezierCurveTo(
                 this.x,
                 this.y + this.height / 2,
@@ -89,7 +88,6 @@
 
     // 1. initiate harp
     var harp = new Harp("harp", 16);
-    console.log(harp.strings.length);
 </script>
 
 </body>

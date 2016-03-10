@@ -3,28 +3,29 @@
     <title>JAM with Chrome Demo</title>
     <style type="text/css">
 
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
         body {
-            background-color: #F8F8F8;
+            background-color: #000000;
+            height: 100%;
             color: #424242;
             text-align: center;
             font-size: 24px;
             font-family: 'Helvetica',sans-serif;
         }
 
-        a {
-          color: #000;
-        }
-
         #wrapper {
             position: relative;
-            width: 400px;
-            margin: 50px auto;
+            width: 100%;
         }
 
         #stage {
             position: absolute;
-            width: 400px;
-            height: 300px;
+            width: 100%;
+            height: 700px;
             z-index: 10;
             -moz-user-select: none;
             -webkit-user-select: none;
@@ -44,12 +45,10 @@
 <body>
     <div id="wrapper">
         <div id="stage"></div>
-        <div id="plate"></div>
-        <canvas id="strings" width="400px" height="600px"/>
+        <canvas id="strings" width="1280px" height="700px" style="background:#000000;"></canvas>
     </div>
 
     <script>
-    
       // Shim by Paul Irish
       // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
       window.requestAnimFrame = (function() {
@@ -62,7 +61,10 @@
                       window.setTimeout(callback, 1000 / 60);
                   };
       })();
-      
+
+
+
+
       function Stage(id) {
         this.el = document.getElementById(id);
         
@@ -92,6 +94,10 @@
             _y += el.offsetTop;
             el = el.offsetParent;
           }
+
+          console.log("_x = " + _x + "_y = " + _y);
+          console.log("a");
+
           return { top: _y - window.scrollY, left: _x - window.scrollX };
         }
       };
@@ -126,7 +132,9 @@
         document.addEventListener('mousemove', function(e) {
           var x, y;
       
-          if (!_self.dragging || _self.limit) return;
+          if (!_self.dragging || _self.limit)
+              return;
+
           _self.limit = true;
       
           x = e.clientX - _self.positionTop;
@@ -134,18 +142,14 @@
       
       
           _self.hitZones.forEach(function(zone) {
-            _self.checkIntercept(_self.prev[0], 
-                                 _self.prev[1],
-                                 x, 
-                                 y,
-                                 zone);
+            _self.checkIntercept(_self.prev[0], _self.prev[1], x, y, zone);
           });
       
           _self.prev = [x, y];
       
           setInterval(function() {
             _self.limit = false;
-          }, 50);      
+          }, 5);
         }, false);
         
         document.addEventListener('mouseover', function(e) {
@@ -158,11 +162,7 @@
           y = e.clientY - _self.positionLeft;
         
           _self.hitZones.forEach(function(zone) {
-            _self.checkIntercept(_self.prev[0], 
-                                 _self.prev[1],
-                                 x, 
-                                 y,
-                                 zone);
+            _self.checkIntercept(_self.prev[0], _self.prev[1], x, y, zone);
           });
         }, false);
       };
@@ -211,7 +211,8 @@
          }
        }; 
   
-      
+
+
       function Rect(x, y, width, height) {
         this.x = x;
         this.y = y;
@@ -250,10 +251,10 @@
       
       Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
         //-- http://www.kevlindev.com/gui/math/intersection/Intersection.js
-        var result,
-            ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x),
-            ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x),
-            u_b = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+        var result;
+        var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x);
+        var ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x);
+        var u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
     
         if (u_b != 0) {
           var ua = ua_t / u_b;
@@ -275,7 +276,8 @@
         return result;
       };
       
-      
+
+
       function GuitarString(rect) {
           this.x = rect.x;
           this.y = rect.y;
@@ -286,21 +288,35 @@
       }
       
       GuitarString.prototype.strum = function() {
-        this._strumForce = 10;
+        this._strumForce = 20;
+      };
+
+      GuitarString.prototype.stringColor = function(stringNum) {
+          var red   = Math.floor(Math.sin(.3 * stringNum + 2) * 127 + 128);
+          var green = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128);
+          var blue  = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
+
+          c = "rgb(" + red + "," + green + "," + blue + ")";
+          return c;
       };
       
-      GuitarString.prototype.render = function(ctx) {
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 1;
+      GuitarString.prototype.render = function(ctx, stringNum) {
+        ctx.strokeStyle = this.stringColor(stringNum);
+        ctx.lineWidth = 10;
         ctx.beginPath();
+
+        // start point
         ctx.moveTo(this.x, this.y);
         ctx.bezierCurveTo(
+                // first curve point
                 this.x + Math.sin(this.a) * this._strumForce,
-                this.y + this.height / 2,
+                this.y + this.height * 0.3,
 
+                // second curve point
                 this.x  + Math.sin(this.a) * this._strumForce,
-                this.y + this.height / 2,
+                this.y + this.height * 0.6,
 
+                // end point
                 this.x,
                 this.y + this.height
         );
@@ -310,7 +326,8 @@
         this.a += 0.8;
       };
       
-      
+
+
       function StringInstrument(stageID, canvasID, stringNum) {
           this.strings = [];
           this.stage = new Stage(stageID);
@@ -326,7 +343,7 @@
       
       StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
-          var srect = new Rect(10 + i * 25, 90, 10, 350);
+          var srect = new Rect(50 + i * 78, 0, 10, 700);
           var s = new GuitarString(srect);
           this.stage.addString(srect, s);
           this.strings.push(s);
@@ -343,7 +360,7 @@
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         for (var i = 0; i < this.stringNum; i++) {
-          this.strings[i].render(this.ctx);
+          this.strings[i].render(this.ctx, i);
         }
       };
       
