@@ -48,16 +48,17 @@
         <canvas id="strings" width="1280px" height="700px" style="background:#101010;"></canvas>
     </div>
 
+<script src="//js.leapmotion.com/leap-0.6.4.js"></script>
 <script>
     window.requestAnimFrame = (function() {
-      return  window.requestAnimationFrame ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame ||
-              window.oRequestAnimationFrame ||
-              window.msRequestAnimationFrame ||
-              function(callback) {
-                  window.setTimeout(callback, 1000 / 60);
-              };
+        return  window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function(callback) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
     })();
 
 
@@ -278,17 +279,20 @@
 
 
 
-    function HarpString(rect) {
+    function HarpString(rect, id) {
+        this.id = id + 1;
         this.x = rect.x;
         this.y = rect.y;
         this.width = rect.width;
         this.height = rect.height;
+        this.sound = new Audio("sounds/Soundfiles/Toon" + this.id + ".mp3");
         this._strumForce = 0;
         this.a = 0;
     }
 
     HarpString.prototype.strum = function() {
         this._strumForce = 20;
+        this.sound.play();
     };
 
     HarpString.prototype.stringColor = function(stringNum) {
@@ -328,12 +332,24 @@
 
 
 
+//    function Hands() {
+//        this.controller = new Leap.Controller();
+//
+//        return this;
+//    }
+
     function StringInstrument(stageID, canvasID, stringNum) {
         this.strings = [];
         this.stage = new Stage(stageID);
+        this.stringNum = stringNum;
+
         this.canvas = document.getElementById(canvasID);
         this.ctx = this.canvas.getContext('2d');
-        this.stringNum = stringNum;
+
+        this.hands = [];
+
+        this.clr = new Leap.Controller();
+        this.clr.connect();
 
         this.create();
         this.render();
@@ -344,17 +360,79 @@
     StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
             var srect = new Rect(50 + i * 78, 0, 10, 700);
-            var s     = new HarpString(srect);
+            var s     = new HarpString(srect, i);
 
             this.stage.addString(srect, s);
             this.strings.push(s);
         }
     };
 
+    StringInstrument.prototype.renderLM = function() {
+        this.clr.on("frame", function(frame) {
+            if (frame.pointables.length > 0) {
+
+            }
+        });
+
+//        var controller = new Leap.Controller();
+//        controller.on("frame", function(frame) {
+//            if (frame.pointables.length > 0) {
+//                var canvasElement = this.canvas,
+//                    ctx = this.ctx;
+//
+//                for (var i = 0, len = frame.hands.length; i < len; i++) {
+//                    //clear
+//                    canvasElement.width = canvasElement.width;
+//
+//                    //Get a pointable (hand) and normalize the index finger's dip position
+//                    var hand = frame.hands[i];
+//                    var interactionBox = frame.interactionBox;
+//                    var normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
+//
+//                    // Convert the normalized coordinates to span the canvas
+//                    handInfo[i][0] = canvasElement.width * normalizedPosition[0];
+//                    handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
+//                    handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
+//
+//                    // loop through all objects and displayAreas
+//                    for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+//
+//                        // only display within the canvas area
+//                        if (handInfo[j][0] > 0 &&
+//                                handInfo[j][0] < canvasElement.width &&
+//                                handInfo[j][2] < 900) {
+//                            var x = handInfo[j][0];
+//                            var y = handInfo[j][1];
+//                            var z = handInfo[j][2];
+//
+//                            // create circle and position it
+//                            ctx.beginPath();
+//                            ctx.arc(x, y, 25, 25, 0, 2 * Math.PI);
+//
+//                            // set opacity according to Z value
+//                            displayOpacity = 1.72 - 0.0018 * z;
+//
+//                            ctx.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
+//                            ctx.fill();
+//
+//                            // make circle green if we are in the "touch area"
+//                            if (displayOpacity >= 1) {
+//                                ctx.fillStyle = "rgba(0, 255, 150, 1)";
+//                                ctx.fill();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//        controller.connect();
+    };
+
     StringInstrument.prototype.render = function() {
         var that = this;
 
         requestAnimFrame(function() {
+            that.renderLM();
             that.render();
         });
 
