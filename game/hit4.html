@@ -9,9 +9,9 @@
         }
 
         body {
-            background-color: #101010;
+            background-color: rgba(16, 16, 16, 0);
             height: 100%;
-            color: #424242;
+            color: rgba(66, 66, 66, 0);
             text-align: center;
             font-size: 24px;
             font-family: 'Helvetica',sans-serif;
@@ -45,7 +45,7 @@
 <body>
     <div id="wrapper">
         <div id="stage"></div>
-        <canvas id="strings" width="1280px" height="700px" style="background:#101010;"></canvas>
+        <canvas id="strings" width="1280px" height="700px" style="background:rgb(16, 16, 16);"></canvas>
     </div>
 
 <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
@@ -342,27 +342,89 @@
 
 
 
-//    function Hands() {
-//        this.controller = new Leap.Controller();
-//
-//        return this;
-//    }
+    function Hand(x, y, radius, start, end, dir, opacity, fill) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.start = start;
+        this.end = end;
+        this.direction = dir;
+        this.opacity = opacity;
+        this.fill = fill;
+
+        return this;
+    }
+
+
+
+
+    function Input(amount, canvasID) {
+        this.hands = [];
+        this.handsNum = amount;
+
+        this.canvas = document.getElementById(canvasID);
+        this.ctx = this.canvas.getContext('2d');
+
+        this.create();
+
+        return this;
+    }
+
+    Input.prototype.create = function() {
+        for (var i = 0; i < this.handsNum; i++) {
+            var x = this.canvas.width/2,
+                y = this.canvas.height/2;
+
+            var hand = new Hand(x, y, 25, 25, 0, 2 * Math.PI, 1, "rgba(0,0,0,1)");
+            this.hands.push(hand);
+        }
+    };
+
+    Input.prototype.render = function(id, handX, handY, handZ) {
+        var h = this.hands[id],
+            ctx = this.ctx;
+
+        // create circle and position it
+        ctx.beginPath();
+        ctx.arc(handX, handY, h.radius, h.start, h.end, h.direction);
+
+        // set opacity according to Z value
+        h.displayOpacity = 1.72 - 0.0018 * handZ;
+
+        ctx.fillStyle = "rgba(255, 255, 255, " + h.displayOpacity + ")";
+        ctx.fill();
+
+        // make circle green if we are in the "touch area"
+        if (h.displayOpacity >= 1) {
+            ctx.fillStyle = "rgba(0, 255, 150, 1)";
+            ctx.fill();
+        }
+    };
+
+
+
 
     function StringInstrument(stageID, canvasID, stringNum) {
         this.strings = [];
         this.stage = new Stage(stageID);
         this.stringNum = stringNum;
 
+        this.canvasID = canvasID;
         this.canvas = document.getElementById(canvasID);
         this.ctx = this.canvas.getContext('2d');
 
-        this.hands = [];
+        this.handsNum = 2;
+        this.input = new Input(this.handsNum, canvasID);
+        this.handInfo = [[0,0,0], [0,0,0]];
+        this.hasRenderedHands = false;
 
-//        this.clr = new Leap.Controller();
-//        this.clr.connect();
+        this.clr = new Leap.Controller();
+        this.clr.connect();
 
         this.create();
+        this.renderLM();
         this.render();
+
 
         return this;
     }
@@ -378,71 +440,51 @@
     };
 
     StringInstrument.prototype.renderLM = function() {
-//        this.clr.on("frame", function(frame) {
-//            if (frame.pointables.length > 0) {
-//
-//            }
-//        });
+        var that = this,
+            canvasElement = document.getElementById(this.canvasID);
 
-//        var controller = new Leap.Controller();
-//        controller.on("frame", function(frame) {
-//            if (frame.pointables.length > 0) {
-//                var canvasElement = this.canvas,
-//                    ctx = this.ctx;
-//
-//                for (var i = 0, len = frame.hands.length; i < len; i++) {
-//                    //clear
-//                    canvasElement.width = canvasElement.width;
-//
-//                    //Get a pointable (hand) and normalize the index finger's dip position
-//                    var hand = frame.hands[i];
-//                    var interactionBox = frame.interactionBox;
-//                    var normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
-//
-//                    // Convert the normalized coordinates to span the canvas
-//                    handInfo[i][0] = canvasElement.width * normalizedPosition[0];
-//                    handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
-//                    handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
-//
-//                    // loop through all objects and displayAreas
-//                    for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
-//
-//                        // only display within the canvas area
-//                        if (handInfo[j][0] > 0 &&
-//                                handInfo[j][0] < canvasElement.width &&
-//                                handInfo[j][2] < 900) {
-//                            var x = handInfo[j][0];
-//                            var y = handInfo[j][1];
-//                            var z = handInfo[j][2];
-//
-//                            // create circle and position it
-//                            ctx.beginPath();
-//                            ctx.arc(x, y, 25, 25, 0, 2 * Math.PI);
-//
-//                            // set opacity according to Z value
-//                            displayOpacity = 1.72 - 0.0018 * z;
-//
-//                            ctx.fillStyle = "rgba(0, 0, 0, " + displayOpacity + ")";
-//                            ctx.fill();
-//
-//                            // make circle green if we are in the "touch area"
-//                            if (displayOpacity >= 1) {
-//                                ctx.fillStyle = "rgba(0, 255, 150, 1)";
-//                                ctx.fill();
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//        controller.connect();
+        this.clr.on("frame", function (frame) {
+            if (frame.pointables.length > 0) {
+                canvasElement.width = canvasElement.width;
+
+                //Get a pointable (hand) and normalize the index finger's dip position
+                for (var i = 0, len = frame.hands.length; i < len; i++) {
+                    var hand = frame.hands[i],
+                        interactionBox = frame.interactionBox,
+                        normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
+
+                    // Convert the normalized coordinates to span the canvas
+                    that.handInfo[i][0] = canvasElement.width * normalizedPosition[0];
+                    that.handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
+                    that.handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
+
+                    var handX = that.handInfo[i][0],
+                        handY = that.handInfo[i][1],
+                        handZ = that.handInfo[i][2];
+
+                    // loop through all objects and displayAreas
+                    for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+
+                        // only display within the canvas area
+                        if (handX > 0 &&
+                            handY < canvasElement.width &&
+                            handZ < 900)
+                        {
+//                            that.input.render(i, handX, handY, handZ);
+                            that.input.hands[i].x = handX;
+                            that.input.hands[i].y = handY;
+                            that.input.hands[i].z = handZ;
+                        }
+                    }
+                }
+            }
+        });
     };
 
     StringInstrument.prototype.render = function() {
         var that = this;
 
         requestAnimFrame(function() {
-            that.renderLM();
             that.render();
         });
 
@@ -450,6 +492,10 @@
 
         for (var i = 0; i < this.stringNum; i++) {
             this.strings[i].render(this.ctx, i);
+        }
+
+        for (i = 0; i < this.handsNum; i++) {
+            this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
         }
     };
 
