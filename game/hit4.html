@@ -279,17 +279,20 @@
 
 
 
-    function HarpString(rect) {
+    function HarpString(rect, id) {
+        this.id = id + 1;
         this.x = rect.x;
         this.y = rect.y;
         this.width = rect.width;
         this.height = rect.height;
+        this.sound = new Audio("sounds/Soundfiles/Toon" + id + ".mp3");
         this._strumForce = 0;
         this.a = 0;
     }
 
     HarpString.prototype.strum = function() {
         this._strumForce = 20;
+        this.sound.play();
     };
 
     HarpString.prototype.stringColor = function(stringNum) {
@@ -357,7 +360,7 @@
     StringInstrument.prototype.create = function() {
         for (var i = 0; i < this.stringNum; i++) {
             var srect = new Rect(50 + i * 78, 0, 10, 700);
-            var s     = new HarpString(srect);
+            var s     = new HarpString(srect, i);
 
             this.stage.addString(srect, s);
             this.strings.push(s);
@@ -367,7 +370,7 @@
     StringInstrument.prototype.renderLM = function() {
         this.clr.on("frame", function(frame) {
             if (frame.pointables.length > 0) {
-                this.canvas.width = this.canvas.width;
+
             }
         });
 
