@@ -286,12 +286,22 @@
         this.width = rect.width;
         this.height = rect.height;
         this.sound = new Audio("sounds/Soundfiles/Toon" + this.id + ".mp3");
+        this.sound.preload = "auto";
         this._strumForce = 0;
         this.a = 0;
     }
 
     HarpString.prototype.strum = function() {
         this._strumForce = 20;
+
+        if (this.sound.ended) {
+            this.sound.play();
+        } else {
+            if (this.sound.currentTime > 0) {
+                this.sound.currentTime = 0.3;
+            }
+        }
+
         this.sound.play();
     };
 
@@ -348,8 +358,8 @@
 
         this.hands = [];
 
-        this.clr = new Leap.Controller();
-        this.clr.connect();
+//        this.clr = new Leap.Controller();
+//        this.clr.connect();
 
         this.create();
         this.render();
@@ -368,11 +378,11 @@
     };
 
     StringInstrument.prototype.renderLM = function() {
-        this.clr.on("frame", function(frame) {
-            if (frame.pointables.length > 0) {
-
-            }
-        });
+//        this.clr.on("frame", function(frame) {
+//            if (frame.pointables.length > 0) {
+//
+//            }
+//        });
 
 //        var controller = new Leap.Controller();
 //        controller.on("frame", function(frame) {
