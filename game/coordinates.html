@@ -49,15 +49,13 @@
     shapes.push(new Shape(canvasElement.width/2-50, canvasElement.height/2-50, 0, 100, 100, "rgba(255, 0, 0, 1)"));
     shapes.push(new Shape(canvasElement.width-100, canvasElement.height-100, 0, 100, 100, "rgba(255, 0, 0, 1)"));
 
-    // leap motion loop
-    var controller = new Leap.Controller();
     controller.on("frame", function(frame){
         if(frame.pointables.length > 0)
         {
             // use all hands we see in frame
             for (var i = 0, len = frame.hands.length; i < len; i++) {
                 //clear
-                canvasElement.width = canvasElement.width;
+//                canvasElement.width = canvasElement.width;
 
                 //Get a pointable (hand) and normalize the index finger's dip position
                 hand = frame.hands[i];
