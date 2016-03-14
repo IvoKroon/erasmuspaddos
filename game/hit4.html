@@ -9,9 +9,9 @@
         }
 
         body {
-            background-color: rgba(16, 16, 16, 0);
+            background-color: rgb(16, 16, 16);
             height: 100%;
-            color: rgba(66, 66, 66, 0);
+            color: rgba(149, 255, 20, 0);
             text-align: center;
             font-size: 24px;
             font-family: 'Helvetica',sans-serif;
@@ -113,60 +113,6 @@
 
         window.addEventListener('scroll', function() {
             that.position();
-        }, false);
-
-
-        this.el.addEventListener('mousemove', function(e) {
-            var x = e.clientX - that.positionTop,
-                y = e.clientY - that.positionLeft;
-
-            that.hitZones.forEach(function(zone) {
-                that.checkPoint(x, y, zone);
-            });
-
-            that.dragging = true;
-            that.prev = [x, y];
-        }, false);
-
-
-        document.addEventListener('mousemove', function(e) {
-            var x, y;
-
-            if (!that.dragging || that.limit)
-                return;
-
-            that.limit = true;
-
-            x = e.clientX - that.positionTop;
-            y = e.clientY - that.positionLeft;
-
-            that.hitZones.forEach(function(zone) {
-                that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
-            });
-
-            that.prev = [x, y];
-
-
-            setInterval(function() {
-                that.limit = false;
-            }, 50);
-        }, false);
-
-
-        document.addEventListener('mouseover', function(e) {
-            var x, y;
-
-            if (!that.dragging)
-                return;
-
-            that.dragging = false;
-
-            x = e.clientX - that.positionTop;
-            y = e.clientY - that.positionLeft;
-
-            that.hitZones.forEach(function(zone) {
-                that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
-            });
         }, false);
     };
 
@@ -391,13 +337,18 @@
         // set opacity according to Z value
         h.displayOpacity = 1.72 - 0.0018 * handZ;
 
-        ctx.fillStyle = "rgba(255, 255, 255, " + h.displayOpacity + ")";
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillStyle = "rgba(200, 100, 100, " + h.displayOpacity + ")";
         ctx.fill();
+        ctx.stroke();
 
         // make circle green if we are in the "touch area"
         if (h.displayOpacity >= 1) {
-            ctx.fillStyle = "rgba(0, 255, 150, 1)";
+            ctx.strokeStyle = "rgba(0,0,0,0)";
+            ctx.fillStyle = "rgba(255, 255, 255, 1)";
             ctx.fill();
+            ctx.stroke();
         }
     };
 
@@ -415,8 +366,6 @@
 
         this.handsNum = 2;
         this.input = new Input(this.handsNum, canvasID);
-        this.handInfo = [[0,0,0], [0,0,0]];
-        this.hasRenderedHands = false;
 
         this.clr = new Leap.Controller();
         this.clr.connect();
@@ -445,7 +394,8 @@
 
         this.clr.on("frame", function (frame) {
             if (frame.pointables.length > 0) {
-                canvasElement.width = canvasElement.width;
+                w = canvasElement.width;
+                canvasElement.width = w;
 
                 //Get a pointable (hand) and normalize the index finger's dip position
                 for (var i = 0, len = frame.hands.length; i < len; i++) {
@@ -453,27 +403,35 @@
                         interactionBox = frame.interactionBox,
                         normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
+                    // no more than 2 hands
+                    if (i > 1)
+                        return;
+
+                    // grab previous coords
+                    var prevX = that.input.hands[i].x,
+                        prevY = that.input.hands[i].y;
+
                     // Convert the normalized coordinates to span the canvas
-                    that.handInfo[i][0] = canvasElement.width * normalizedPosition[0];
-                    that.handInfo[i][1] = canvasElement.height * (1 - normalizedPosition[1]);
-                    that.handInfo[i][2] = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
+                    that.input.hands[i].x = canvasElement.width * normalizedPosition[0];
+                    that.input.hands[i].y = canvasElement.height * (1 - normalizedPosition[1]);
+                    that.input.hands[i].z = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
 
-                    var handX = that.handInfo[i][0],
-                        handY = that.handInfo[i][1],
-                        handZ = that.handInfo[i][2];
+                    var handX = that.input.hands[i].x,
+                        handY = that.input.hands[i].y,
+                        handZ = that.input.hands[i].z;
 
-                    // loop through all objects and displayAreas
+                    // loop through all objects
                     for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
 
-                        // only display within the canvas area
+                        // only check string collision inside canvas and visible Z range
                         if (handX > 0 &&
                             handY < canvasElement.width &&
                             handZ < 900)
                         {
-//                            that.input.render(i, handX, handY, handZ);
-                            that.input.hands[i].x = handX;
-                            that.input.hands[i].y = handY;
-                            that.input.hands[i].z = handZ;
+                            // only check collision if hand is in correct Z range
+                            if (handZ < 400) {
+                                that.moved(handX, handY, prevX, prevY);
+                            }
                         }
                     }
                 }
@@ -484,19 +442,33 @@
     StringInstrument.prototype.render = function() {
         var that = this;
 
+        // loop
         requestAnimFrame(function() {
             that.render();
         });
 
+        // clear screen
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // render strings
         for (var i = 0; i < this.stringNum; i++) {
             this.strings[i].render(this.ctx, i);
         }
 
+        // render hands
         for (i = 0; i < this.handsNum; i++) {
             this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
         }
+    };
+
+    // check movement of pointers
+    StringInstrument.prototype.moved = function(handX, handY) {
+        var s = this.stage;
+
+        // check if movement crossed any strings
+        s.hitZones.forEach(function(zone) {
+            s.checkPoint(handX, handY, zone);
+        });
     };
 
     var harp = new StringInstrument("stage", "strings", 16);
