@@ -25,6 +25,13 @@
         this.fill = fill;
     }
 
+    Shape.prototype.create = function() {
+
+    };
+
+    Shape.prototype.render = function() {
+
+    };
 
 
     var output = document.getElementById('output');
@@ -74,8 +81,8 @@
 
                     // only display within the canvas area
                     if (handInfo[j][0] > 0 &&
-                            handInfo[j][0] < canvasElement.width &&
-                            handInfo[j][2] < 900)
+                        handInfo[j][0] < canvasElement.width &&
+                        handInfo[j][2] < 900)
                     {
                         var x = handInfo[j][0];
                         var y = handInfo[j][1];
