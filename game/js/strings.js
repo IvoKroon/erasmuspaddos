@@ -453,6 +453,7 @@ function StringInstrument(stageID, canvasID, stringNum, handsNum) {
     this.canvas = document.getElementById(canvasID);
     this.ctx = this.canvas.getContext('2d');
 
+    this.doRenderHands = false;
     this.handsNum = handsNum;
     this.input = new Input(this.handsNum, canvasID);
 
@@ -483,6 +484,8 @@ StringInstrument.prototype.renderLM = function(canvasID) {
 
     this.clr.on("frame", function (frame) {
         if (frame.pointables.length > 0) {
+            that.doRenderHands = true;
+
             w = canvasElement.width;
             canvasElement.width = w;
 
@@ -524,6 +527,8 @@ StringInstrument.prototype.renderLM = function(canvasID) {
                     }
                 }
             }
+        } else {
+            that.doRenderHands = false;
         }
     });
 };
@@ -545,8 +550,10 @@ StringInstrument.prototype.render = function() {
     }
 
     // render hands
-    for (i = 0; i < this.handsNum; i++) {
-        this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
+    if (this.doRenderHands) {
+        for (i = 0; i < this.handsNum; i++) {
+            this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
+        }
     }
 };
 
