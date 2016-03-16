@@ -7,6 +7,8 @@ var HAND_Z_MIN = 400,
     HAND_Z_MID = 900,
     HAND_Z_MAX = 1800;
 
+var prevTime = Date.now();
+
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -169,6 +171,52 @@ Stage.prototype.checkPoint = function(x, y, zone) {
 Stage.prototype.checkIntercept = function(x1, y1, x2, y2, zone) {
     if (zone.intercept(x1, y1, x2, y2)) {
         //zone.string.strum();
+    }
+};
+
+Stage.prototype.LMMoved = function(handX, handY) {
+    this.hitZones.forEach(function(zone) {
+        this.checkPoint(handX, handY, zone);
+    });
+};
+
+Stage.prototype.timer = function() {
+    var curTime = Date.now();
+    if (curTime - prevTime > 1000) {
+        var min  = document.getElementById('timer2'),
+            sec1 = document.getElementById('timer4'),
+            sec2 = document.getElementById('timer5'),
+            s, ss, m;
+
+        m  = parseInt(min.innerHTML);
+        s  = parseInt(sec1.innerHTML);
+        ss = parseInt(sec2.innerHTML);
+
+        if (m == 1) {
+            m = 0;
+        }
+
+        if (m == 0) {
+            if (s == 0 && min.innerHTML === "1") {
+                s = 6;
+            }
+
+            if (ss == 0) {
+                s--;
+            }
+
+            if (ss == 0) {
+                ss = 9;
+            } else {
+                ss--;
+            }
+        }
+
+        min.innerHTML  = m + "";
+        sec1.innerHTML = s + "";
+        sec2.innerHTML = ss + "";
+
+        prevTime = curTime;
     }
 };
 
@@ -464,7 +512,6 @@ function StringInstrument(stageID, canvasID, stringNum, handsNum) {
     this.renderLM(canvasID);
     this.render();
 
-
     return this;
 }
 
@@ -522,7 +569,7 @@ StringInstrument.prototype.renderLM = function(canvasID) {
                     {
                         // only check collision if hand is in correct Z range
                         if (handZ < HAND_Z_MIN) {
-                            that.moved(handX, handY, prevX, prevY);
+                            that.stage.LMMoved(handX, handY);
                         }
                     }
                 }
@@ -541,6 +588,9 @@ StringInstrument.prototype.render = function() {
         that.render();
     });
 
+    // timer
+    this.stage.timer();
+
     // clear screen
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -558,13 +608,13 @@ StringInstrument.prototype.render = function() {
 };
 
 // check movement of pointers
-StringInstrument.prototype.moved = function(handX, handY) {
-    var s = this.stage;
-
-    // check if movement crossed any strings
-    s.hitZones.forEach(function(zone) {
-        s.checkPoint(handX, handY, zone);
-    });
-};
+//StringInstrument.prototype.moved = function(handX, handY) {
+//    var s = this.stage;
+//
+//    // check if movement crossed any strings
+//    s.hitZones.forEach(function(zone) {
+//        s.checkPoint(handX, handY, zone);
+//    });
+//};
 
 var harp = new StringInstrument("stage", "strings", 16, 2);
