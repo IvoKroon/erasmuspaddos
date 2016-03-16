@@ -6,7 +6,7 @@ body {
     padding:0;
     font-family: sans-serif;
     line-height: 1.8em;
-    background: url('../image/brug2.jpg') no-repeat center center fixed;
+    background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -20,6 +20,7 @@ h1 {
     text-shadow: 4px 4px #030000;
 }
 
+/*info pagina*/
 #info {
     position: absolute;
     margin: auto;
@@ -29,14 +30,10 @@ h1 {
     width: 90%;
 }
 
-#text {
-}
-
 p {
     color:white;
     
 }
-
 
 img {
     padding: 5px;
@@ -44,6 +41,9 @@ img {
     float: left;
 }
 
+/*einde info pagina*/
+
+/*Home pagina*/
 #wrapper {
     position: absolute;
     margin: auto;
@@ -75,6 +75,8 @@ img {
     height: 35px;
     margin-bottom: -12px;
 }
+
+/*einde home pagina*/
 
 @media only screen and (max-width: 768px) {
     body {
@@ -142,11 +144,11 @@ img {
     margin-top: 20px;
 }
 .uk {
-    height: 15px;
+
     width: 30px;
 }
 .nl {
-    height: 15px;
+
     width: 30px;
 }
 
