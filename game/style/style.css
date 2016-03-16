@@ -34,3 +34,31 @@ body {
     left: 0;
     z-index: 9;
 }
+
+.timer {
+    font-size: 4em;
+    color: white;
+    letter-spacing: .1em;
+    position: absolute;
+    top: 25px;
+}
+
+#timer1 {
+    left: 35.4%;
+}
+
+#timer2 {
+    left: 41.5%;
+}
+
+#timer3 {
+    left: 48.5%;
+}
+
+#timer4 {
+    left: 53.6%;
+}
+
+#timer5 {
+    left: 59.7%;
+}
