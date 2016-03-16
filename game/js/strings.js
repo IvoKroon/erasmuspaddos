@@ -163,7 +163,7 @@ Stage.prototype.checkPoint = function(x, y, zone) {
 
 Stage.prototype.checkIntercept = function(x1, y1, x2, y2, zone) {
     if (zone.intercept(x1, y1, x2, y2)) {
-        zone.string.strum();
+        //zone.string.strum();
     }
 };
 
@@ -247,13 +247,15 @@ function HarpString(rect, id) {
     this.green = 0;
     this.blue = 0;
 
-    this.isBright = false;
+    this.isGlowing = false;
+    this.shadowColor = "";
+    this.shadowBlur = 0;
 }
 
 HarpString.prototype.strum = function() {
     this._strumForce = 20;
+    this.isGlowing = true;
     this.playTone();
-    this.isBright = true;
 };
 
 HarpString.prototype.playTone = function() {
@@ -280,7 +282,7 @@ HarpString.prototype.stringColor = function(stringNum) {
     return "rgb(" + r + "," + g + "," + b + ")";
 };
 
-HarpString.prototype.brightStringColor = function () {
+HarpString.prototype.glowStringColor = function () {
     var mult = 1.2,
         r = this.red,
         g = this.green,
@@ -288,27 +290,39 @@ HarpString.prototype.brightStringColor = function () {
 
      //determine what color we are
      //increase it by 20%
-    if (r >= g && r >= b)
+    if (r >= g && r >= b) {
         r *= mult;
+        if (r > 255)
+            r = 255;
+    }
 
-    if (g >= r && g >= b)
+    if (g >= r && g >= b) {
         g *= mult;
+        if (g > 255)
+            g = 255;
+    }
 
-    if (b >= r && b >= g)
+    if (b >= r && b >= g) {
         b *= mult;
+        if (b > 255)
+            b = 255;
+    }
 
     return "rgb(" + r + "," + g + "," + b + ")";
 };
 
 HarpString.prototype.render = function(ctx, stringNum) {
+    // determine color of glow
+    this.shadowColor = this.glowStringColor();
+
+    // light up strings when strum
+    this.stringGlowBrightness();
+
     ctx.strokeStyle = this.stringColor(stringNum);
+    ctx.shadowColor = this.shadowColor;
+    ctx.shadowBlur  = this.shadowBlur;
 
-    //if (this.isBright) {
-    //    ctx.shadowBlur = 20;
-    //    ctx.shadowColor = "white";
-    //    ctx.shadowColor = this.brightStringColor();
-    //}
-
+    // render strings
     ctx.lineWidth = 10;
     ctx.beginPath();
 
@@ -329,8 +343,24 @@ HarpString.prototype.render = function(ctx, stringNum) {
     );
     ctx.stroke();
 
-    this._strumForce *= 0.99;
+    this._strumForce *= 0.985;
     this.a += 0.8;
+};
+
+// control brightness of the glow of the string during and after strum
+HarpString.prototype.stringGlowBrightness = function() {
+    if (this.sound.ended)
+        this.isGlowing = false;
+
+    if (this.isGlowing) {
+        this.shadowBlur = 100;
+    } else {
+        this.shadowBlur = this.shadowBlurVal();
+    }
+};
+
+HarpString.prototype.shadowBlurVal = function() {
+    return (this.shadowBlur > 2) ? this.shadowBlur - 2 : this.shadowBlur - this.shadowBlur;
 };
 
 
