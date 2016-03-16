@@ -192,6 +192,9 @@ Stage.prototype.timer = function() {
         s  = parseInt(sec1.innerHTML);
         ss = parseInt(sec2.innerHTML);
 
+        if (m == 0 && s == 0 && ss == 0)
+            return;
+
         if (m == 1) {
             m = 0;
         }
