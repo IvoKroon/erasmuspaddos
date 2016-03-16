@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body id="Sounds">
+<h1>
+    <strong>Play the bridge</strong></h1>
+    <button onClick="record();">Record</button>
+    <button onClick="stop();">Stop</button>
+    <button onClick="play();">Play random sound</button>
+
+<script src="https://www.screencastify.com/libs-api/castify-api.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+    <script>
+        screencastify.setAppId('5741160238678016');
+        var recorder = new screencastify.Recorder();
+
+        function play() {
+            var audio = new Audio();
+            audio.src = './sounds/Soundfiles/Toon'+  Math.ceil(Math.random() * 16) + '.mp3';
+            audio.play();
+
+        }
+
+        function record() {
+            recorder.start({
+                recordConfig: {  // optional
+                    captureSource: 'screen',  // for window picker, use 'screen' for screen picker
+                    audio: {
+                        mic: false,
+                        system: true
+                    }
+                },
+                shareUrl: 'https://your page',  // URL of your page that handles shared files.
+                payload: 'optional arbitrary string'  // Can be retrieved in share handler.
+            }).then(function() {
+                // recording has been started
+            });
+        }
+        screencastify.onSharedFiles = function(fileIds) {
+            // fileIds = ['shared-file-id'];
+            // Return true (or a Promise that resolves to true) from this handler to
+            // indicate that you handle the shared files here.
+            screencastify.getFile(fileIds[0]).then(function(fileInfo) {
+                var fData = new FormData();
+                console.log(fileInfo.file);
+                fData.append('fffds', fileInfo.file);
+                console.log(fData);
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    url: '/uploadSound',
+                    data: fData,
+                    success: function(res) { console.log(res); }
+                });
+            });
+
+            return true;
+        }
+        function stop() {
+            recorder.stop();
+
+        }
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</body>
+</html>
