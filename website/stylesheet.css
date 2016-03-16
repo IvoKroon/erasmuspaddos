@@ -1,0 +1,11 @@
+.navigation {
+    background-color:black;
+    color:white;
+    text-align:center;
+    float:right;
+    width:20%;
+
+}
+.navigation-right{
+    float:right;
+}

@@ -1,0 +1,75 @@
+body {
+    color: white;
+    font-family: "minion-pro",serif;
+}
+
+.erasmusbrug {
+    height: 130px;
+    width: 130px;
+    margin-left: 250px;
+    margin-top: 20px;
+}
+.uk {
+    height: 15px;
+    width: 30px;
+}
+.nl {
+    height: 15px;
+    width: 30px;
+}
+
+li {
+    float: left;
+    margin-right: 50px;
+    margin-top: 50px;
+    list-style: none;
+
+
+}
+
+span
+{
+    display: inline-block;
+    padding: 0px 0px 4px;
+    margin: 0px 10px 0px;
+    position: relative;
+}
+
+span:before
+{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    border-bottom: 1px solid orange;
+    bottom: 2px;
+    -webkit-transform: scaleX(0);
+    -ms-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transition: -webkit-transform 0.2s ease-in;
+    transition: transform 0.2s ease-in;
+}
+
+span:hover:before {
+    -webkit-transform: scaleX(1);
+    -ms-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+.talen  li{
+    margin-left: 50px;
+    list-style: none;
+    margin-right: 1px;
+}
+.logo {
+    display: inline-block;
+}
+
+.header {
+    float: right;
+    width: 1050px;
+    margin-top: 13px;
+    font-size: 13px;
+    font-weight: bold;
+
+}
