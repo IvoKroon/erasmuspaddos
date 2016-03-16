@@ -1,0 +1,212 @@
+body {
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    margin:0 auto;
+    padding:0;
+    font-family: sans-serif;
+    line-height: 1.8em;
+    background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: white;
+}
+
+h1 {
+    color: white;
+    font-size: 80px;
+    text-shadow: 4px 4px #030000;
+}
+
+/*info pagina*/
+#info {
+    position: absolute;
+    margin: auto;
+    top: 30%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+}
+
+p {
+    color:white;
+    
+}
+
+img {
+    padding: 5px;
+    width: 30%;
+    float: left;
+}
+
+/*einde info pagina*/
+
+/*Home pagina*/
+#wrapper {
+    position: absolute;
+    margin: auto;
+    top: 30%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+}
+
+#input1 {
+    background-color: rgba(0, 0, 0, 0.16);
+    color: white;
+    padding-left: 10px;
+    margin-top: 50px;
+    width: 250px;
+    height: 35px;
+}
+
+#input2 {
+    background-color: rgba(2, 2, 2, 0.33);
+    color: white;
+    margin-left: 10px;
+    border: none;
+    padding: 3px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    height: 35px;
+    margin-bottom: -12px;
+}
+
+/*einde home pagina*/
+
+@media only screen and (max-width: 768px) {
+    body {
+        background-position: right;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    body {
+        background-position: right;
+    }
+
+    h1 {
+        font-size: 60px !important;
+    }
+}
+
+@media only screen and (max-width: 480px){
+    body {
+        background-position: right;
+    }
+
+    h1 {
+        font-size: 40px !important;
+    }
+
+    #input1{
+        width: 230px !important;
+        margin-top: 20px;
+    }
+
+    #input2 {
+        padding: 3px 10px !important;
+    }
+}
+
+
+@media only screen and (max-width: 320px){
+    body {
+        background: url('../image/bridgeSmall.jpg') no-repeat center center fixed;
+    }
+
+    h1 {
+        font-size: 35px !important;
+    }
+
+    #input1{
+        width: 130px !important;
+    }
+
+    #input2 {
+        padding: 3px 10px !important;
+    }
+
+}
+
+/*// header*/
+
+
+
+.erasmusbrug {
+    height: 130px;
+    width: 130px;
+    margin-left: 250px;
+    margin-top: 20px;
+}
+.uk {
+
+    width: 30px;
+}
+.nl {
+
+    width: 30px;
+}
+
+li {
+    float: left;
+    margin-right: 50px;
+    margin-top: 50px;
+    list-style: none;
+
+
+}
+
+span
+{
+    display: inline-block;
+    padding: 0px 0px 4px;
+    margin: 0px 10px 0px;
+    position: relative;
+}
+
+span:before
+{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    border-bottom: 1px solid orange;
+    bottom: 2px;
+    -webkit-transform: scaleX(0);
+    -ms-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transition: -webkit-transform 0.2s ease-in;
+    transition: transform 0.2s ease-in;
+}
+
+span:hover:before {
+    -webkit-transform: scaleX(1);
+    -ms-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+.talen  li{
+    margin-left: 50px;
+    list-style: none;
+    margin-right: 1px;
+}
+.logo {
+    display: inline-block;
+}
+
+.header {
+    float: right;
+    width: 1050px;
+    margin-top: 13px;
+    font-size: 13px;
+    font-weight: bold;
+
+}
+
+
+/*einde header*/
