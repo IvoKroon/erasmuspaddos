@@ -2,6 +2,11 @@
  * Created by Sandervspl on 3/16/16.
  */
 
+// globals
+var HAND_Z_MIN = 400,
+    HAND_Z_MID = 900,
+    HAND_Z_MAX = 1800;
+
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -360,7 +365,9 @@ HarpString.prototype.stringGlowBrightness = function() {
 };
 
 HarpString.prototype.shadowBlurVal = function() {
-    return (this.shadowBlur > 2) ? this.shadowBlur - 2 : this.shadowBlur - this.shadowBlur;
+    var reduceB = 2;
+
+    return (this.shadowBlur > reduceB) ? this.shadowBlur - reduceB : this.shadowBlur - this.shadowBlur;
 };
 
 
@@ -400,7 +407,7 @@ Input.prototype.create = function() {
         var x = this.canvas.width/2,
             y = this.canvas.height/2;
 
-        var hand = new Hand(x, y, 1900, 25, 25, 0, 2 * Math.PI, 0, "rgb(0,0,0)");
+        var hand = new Hand(x, y, HAND_Z_MAX, 25, 25, 0, 2 * Math.PI, 0, "rgb(0,0,0)");
         this.hands.push(hand);
     }
 };
@@ -415,9 +422,10 @@ Input.prototype.render = function(id, handX, handY, handZ) {
 
     // set opacity according to Z value and
     // don't show pointer on load, before registering a hand
-    if (handZ < 1800) {
+    if (handZ < HAND_Z_MAX) {
         h.displayOpacity = 1.72 - 0.0018 * handZ;
 
+        ctx.shadowBlur = 0;
         ctx.lineWidth = 2;
         ctx.strokeStyle = "rgba(255, 255, 255, 1)";
         ctx.fillStyle = "rgba(200, 100, 100, " + h.displayOpacity + ")";
@@ -507,10 +515,10 @@ StringInstrument.prototype.renderLM = function(canvasID) {
                     // only check string collision inside canvas and visible Z range
                     if (handX > 0 &&
                         handY < canvasElement.width &&
-                        handZ < 900)
+                        handZ < HAND_Z_MID)
                     {
                         // only check collision if hand is in correct Z range
-                        if (handZ < 400) {
+                        if (handZ < HAND_Z_MIN) {
                             that.moved(handX, handY, prevX, prevY);
                         }
                     }
