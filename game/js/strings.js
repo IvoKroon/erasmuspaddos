@@ -7,8 +7,6 @@ var HAND_Z_MIN = 400,
     HAND_Z_MID = 900,
     HAND_Z_MAX = 1800;
 
-var prevTime = Date.now();
-
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -28,6 +26,7 @@ function Stage(id) {
     this.position();
     this.listeners();
     this.hitZones = [];
+    this.prevTime = Date.now();
 
     return this;
 }
@@ -182,15 +181,14 @@ Stage.prototype.LMMoved = function(handX, handY) {
 
 Stage.prototype.timer = function() {
     var curTime = Date.now();
-    if (curTime - prevTime > 1000) {
+    
+    if (curTime - this.prevTime > 1000) {
         var min  = document.getElementById('timer2'),
             sec1 = document.getElementById('timer4'),
             sec2 = document.getElementById('timer5'),
-            s, ss, m;
-
-        m  = parseInt(min.innerHTML);
-        s  = parseInt(sec1.innerHTML);
-        ss = parseInt(sec2.innerHTML);
+            m    = parseInt(min.innerHTML),
+            s    = parseInt(sec1.innerHTML),
+            ss   = parseInt(sec2.innerHTML);
 
         if (m == 0 && s == 0 && ss == 0)
             return;
@@ -219,7 +217,7 @@ Stage.prototype.timer = function() {
         sec1.innerHTML = s + "";
         sec2.innerHTML = ss + "";
 
-        prevTime = curTime;
+        this.prevTime = curTime;
     }
 };
 
