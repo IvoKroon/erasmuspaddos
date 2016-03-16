@@ -57,7 +57,7 @@ Menu.prototype.listeners = function () {
 
                 if (cx > bx1 && cx < bx2) {
                     if (cy > by1 && cy < by2) {
-                        console.log("asdasd");
+                        console.log("Knop: " + (i+1));
                     }
                 }
         }
