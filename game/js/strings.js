@@ -31,11 +31,13 @@ function Stage(id) {
     return this;
 }
 
+
 Stage.prototype.position = function() {
     var offset = this.offset();
     this.positionTop = Math.floor(offset.left);
     this.positionLeft = Math.floor(offset.top);
 };
+
 
 Stage.prototype.offset = function() {
     var _x, _y,
@@ -57,17 +59,16 @@ Stage.prototype.offset = function() {
     }
 };
 
+
 Stage.prototype.listeners = function() {
     var that = this;
 
     that.dragging = false;
     that.limit = false;
 
-
     window.addEventListener('resize', function() {
         that.position();
     }, false);
-
 
     window.addEventListener('scroll', function() {
         that.position();
@@ -84,61 +85,8 @@ Stage.prototype.listeners = function() {
         that.dragging = true;
         that.prev = [x, y];
     }, false);
-
-
-    document.addEventListener('mousemove', function(e) {
-        var x, y;
-
-        if (!that.dragging || that.limit)
-            return;
-
-        that.limit = true;
-
-        x = e.clientX - that.positionTop;
-        y = e.clientY - that.positionLeft;
-
-        that.hitZones.forEach(function(zone) {
-            that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
-        });
-
-        that.prev = [x, y];
-
-
-        setInterval(function() {
-            that.limit = false;
-        }, 50);
-    }, false);
-
-
-    document.addEventListener('mouseover', function(e) {
-        var x, y;
-
-        if (!that.dragging)
-            return;
-
-        that.dragging = false;
-
-        x = e.clientX - that.positionTop;
-        y = e.clientY - that.positionLeft;
-
-        that.hitZones.forEach(function(zone) {
-            that.checkIntercept(that.prev[0], that.prev[1], x, y, zone);
-        });
-    }, false);
 };
 
-Stage.prototype.check = function(x, y, zone) {
-    if (!zone.el)
-        return;
-
-    if (zone.inside(x, y)){
-        zone.el.classList.add('hit');
-        this.el.classList.add('active');
-    } else {
-        zone.el.classList.remove('hit');
-        this.el.classList.remove('active');
-    }
-};
 
 Stage.prototype.addRect = function(id) {
     var el = document.getElementById(id),
@@ -154,6 +102,7 @@ Stage.prototype.addRect = function(id) {
     return rect;
 };
 
+
 Stage.prototype.addString = function(rect, string) {
     rect.string = string;
 
@@ -161,17 +110,13 @@ Stage.prototype.addString = function(rect, string) {
     return rect;
 };
 
+
 Stage.prototype.checkPoint = function(x, y, zone) {
     if (zone.inside(x, y)) {
         zone.string.strum();
     }
 };
 
-Stage.prototype.checkIntercept = function(x1, y1, x2, y2, zone) {
-    if (zone.intercept(x1, y1, x2, y2)) {
-        //zone.string.strum();
-    }
-};
 
 Stage.prototype.LMMoved = function(handX, handY) {
     this.hitZones.forEach(function(zone) {
@@ -179,9 +124,10 @@ Stage.prototype.LMMoved = function(handX, handY) {
     });
 };
 
+
 Stage.prototype.timer = function() {
     var curTime = Date.now();
-    
+
     if (curTime - this.prevTime > 1000) {
         var min  = document.getElementById('timer2'),
             sec1 = document.getElementById('timer4'),
@@ -197,20 +143,15 @@ Stage.prototype.timer = function() {
             m = 0;
         }
 
-        if (m == 0) {
-            if (s == 0 && min.innerHTML === "1") {
-                s = 6;
-            }
+        if (s == 0 && min.innerHTML === "1") {
+            s = 6;
+        }
 
-            if (ss == 0) {
-                s--;
-            }
-
-            if (ss == 0) {
-                ss = 9;
-            } else {
-                ss--;
-            }
+        if (ss == 0) {
+            s--;
+            ss = 9;
+        } else {
+            ss--;
         }
 
         min.innerHTML  = m + "";
@@ -233,11 +174,13 @@ function Rect(x, y, width, height) {
     return this;
 }
 
+
 Rect.prototype.inside = function(x,y) {
     return x >= this.x && y >= this.y
         && x <= this.x + this.width
         && y <= this.y + this.height;
 };
+
 
 Rect.prototype.midLine = function() {
     if (this.middle)
@@ -251,6 +194,7 @@ Rect.prototype.midLine = function() {
     return this.middle;
 };
 
+
 Rect.prototype.intercept = function(x1, y1, x2, y2) {
     var segment = this.midLine(),
         start = {x: x1, y: y1},
@@ -258,6 +202,7 @@ Rect.prototype.intercept = function(x1, y1, x2, y2) {
 
     return this.intersectLine(segment[0], segment[1], start, end);
 };
+
 
 //-- http://www.kevlindev.com/gui/math/intersection/Intersection.js
 Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
@@ -270,7 +215,7 @@ Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
             ub = ub_t / u_b;
 
         if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
-            return ua + ub;
+            return true;
         }
     } else {
         if (ua_t == 0 || ub_t == 0) {
@@ -293,7 +238,6 @@ function HarpString(rect, id) {
 
     this._strumForce = 0;
     this.a = 0;
-
     this.sound = new Audio("sounds/Soundfiles/Toon" + this.id + ".mp3");
     this.sound.preload = "auto";
 
@@ -306,11 +250,13 @@ function HarpString(rect, id) {
     this.shadowBlur = 0;
 }
 
+
 HarpString.prototype.strum = function() {
     this._strumForce = 20;
     this.isGlowing = true;
     this.playTone();
 };
+
 
 HarpString.prototype.playTone = function() {
     if (this.sound.ended) {
@@ -324,10 +270,11 @@ HarpString.prototype.playTone = function() {
     }
 };
 
+
 HarpString.prototype.stringColor = function(stringNum) {
-    var r   = Math.floor(Math.sin(.3 * stringNum + 2) * 127 + 128),
-        g   = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128),
-        b   = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
+    var r = Math.floor(Math.sin(.3 * stringNum + 2) * 127 + 128),
+        g = Math.floor(Math.sin(.3 * stringNum + 4) * 127 + 128),
+        b = Math.floor(Math.sin(.3 * stringNum + 6) * 127 + 128);
 
     this.red = r;
     this.green = g;
@@ -335,6 +282,7 @@ HarpString.prototype.stringColor = function(stringNum) {
 
     return "rgb(" + r + "," + g + "," + b + ")";
 };
+
 
 HarpString.prototype.glowStringColor = function () {
     var mult = 1.2,
@@ -364,6 +312,7 @@ HarpString.prototype.glowStringColor = function () {
 
     return "rgb(" + r + "," + g + "," + b + ")";
 };
+
 
 HarpString.prototype.render = function(ctx, stringNum) {
     // determine color of glow
@@ -401,6 +350,7 @@ HarpString.prototype.render = function(ctx, stringNum) {
     this.a += 0.8;
 };
 
+
 // control brightness of the glow of the string during and after strum
 HarpString.prototype.stringGlowBrightness = function() {
     if (this.sound.ended)
@@ -413,6 +363,7 @@ HarpString.prototype.stringGlowBrightness = function() {
     }
 };
 
+
 HarpString.prototype.shadowBlurVal = function() {
     var reduceB = 2;
 
@@ -422,7 +373,7 @@ HarpString.prototype.shadowBlurVal = function() {
 
 
 
-function Hand(x, y, z, radius, start, end, dir, opacity, fill) {
+function Pointer(x, y, z, radius, start, end, dir, opacity, fill) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -451,15 +402,32 @@ function Input(amount, canvasID) {
     return this;
 }
 
+
 Input.prototype.create = function() {
     for (var i = 0; i < this.handsNum; i++) {
         var x = this.canvas.width/2,
             y = this.canvas.height/2;
 
-        var hand = new Hand(x, y, HAND_Z_MAX, 25, 25, 0, 2 * Math.PI, 0, "rgb(0,0,0)");
+        var hand = new Pointer(x, y, HAND_Z_MAX, 25, 25, 0, 2 * Math.PI, 0, "rgb(0,0,0)");
         this.hands.push(hand);
     }
 };
+
+
+Input.prototype.getPos = function (canvas, normalizedPosition, id) {
+    var pos = [];
+
+    this.hands[id].x = canvas.width * normalizedPosition[0];
+    this.hands[id].y = canvas.height * (1 - normalizedPosition[1]);
+    this.hands[id].z = (canvas.width + canvas.height) * normalizedPosition[2];
+
+    pos.push(this.hands[id].x);
+    pos.push(this.hands[id].y);
+    pos.push(this.hands[id].z);
+
+    return pos;
+};
+
 
 Input.prototype.render = function(id, handX, handY, handZ) {
     var h = this.hands[id],
@@ -516,6 +484,7 @@ function StringInstrument(stageID, canvasID, stringNum, handsNum) {
     return this;
 }
 
+
 StringInstrument.prototype.create = function() {
     for (var i = 0; i < this.stringNum; i++) {
         var srect = new Rect(50 + i * 78, 0, 10, 700);
@@ -526,6 +495,9 @@ StringInstrument.prototype.create = function() {
     }
 };
 
+
+// MOVE TO STAGE?
+// NOTHING TO DO WITH THE STRINGS
 StringInstrument.prototype.renderLM = function(canvasID) {
     var that = this,
         canvasElement = document.getElementById(canvasID);
@@ -534,43 +506,30 @@ StringInstrument.prototype.renderLM = function(canvasID) {
         if (frame.pointables.length > 0) {
             that.doRenderHands = true;
 
-            w = canvasElement.width;
-            canvasElement.width = w;
-
             //Get a pointable (hand) and normalize the index finger's dip position
             for (var i = 0, len = frame.hands.length; i < len; i++) {
+                // hand limit
+                if (i+1 > that.handsNum)
+                    return;
+
                 var hand = frame.hands[i],
                     interactionBox = frame.interactionBox,
                     normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
-                // hand limit
-                if (i > that.handsNum - 1)
-                    return;
-
-                // grab previous coords
-                var prevX = that.input.hands[i].x,
-                    prevY = that.input.hands[i].y;
-
                 // Convert the normalized coordinates to span the canvas
-                that.input.hands[i].x = canvasElement.width  * normalizedPosition[0];
-                that.input.hands[i].y = canvasElement.height * (1 - normalizedPosition[1]);
-                that.input.hands[i].z = (canvasElement.width + canvasElement.height) * normalizedPosition[2];
-
-                var handX = that.input.hands[i].x,
-                    handY = that.input.hands[i].y,
-                    handZ = that.input.hands[i].z;
+                var handPos = that.input.getPos(canvasElement, normalizedPosition, i);
 
                 // loop through all objects
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
 
                     // only check string collision inside canvas and visible Z range
-                    if (handX > 0 &&
-                        handY < canvasElement.width &&
-                        handZ < HAND_Z_MID)
+                    if (handPos[0] > 0 &&
+                        handPos[1] < canvasElement.width &&
+                        handPos[2] < HAND_Z_MID)
                     {
                         // only check collision if hand is in correct Z range
-                        if (handZ < HAND_Z_MIN) {
-                            that.stage.LMMoved(handX, handY);
+                        if (handPos[2] < HAND_Z_MIN) {
+                            that.stage.LMMoved(handPos[0], handPos[1]);
                         }
                     }
                 }
@@ -580,6 +539,7 @@ StringInstrument.prototype.renderLM = function(canvasID) {
         }
     });
 };
+
 
 StringInstrument.prototype.render = function() {
     var that = this;
@@ -608,14 +568,7 @@ StringInstrument.prototype.render = function() {
     }
 };
 
-// check movement of pointers
-//StringInstrument.prototype.moved = function(handX, handY) {
-//    var s = this.stage;
-//
-//    // check if movement crossed any strings
-//    s.hitZones.forEach(function(zone) {
-//        s.checkPoint(handX, handY, zone);
-//    });
-//};
 
-var harp = new StringInstrument("stage", "strings", 16, 2);
+
+
+var harp = new StringInstrument("stage", "strings", 16, 6);
