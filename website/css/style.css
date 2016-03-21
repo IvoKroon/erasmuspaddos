@@ -100,7 +100,9 @@ img {
    #wrapper {
        top: 35%;
    }
-
+   .container {
+       margin-top: 8% !important;
+   }
 }
 
 @media only screen and (max-width: 800px) {
@@ -118,6 +120,9 @@ img {
     }
     .erasmusbrug {
         margin-left: 320px !important;
+    }
+    .container {
+        margin-top: 5% !important;
     }
 }
 
@@ -138,10 +143,16 @@ img {
     .erasmusbrug {
         margin-left: 350px !important;
     }
+    .container {
+        margin-top: 15% !important;
+    }
+    #wrapperCl{
+        top: 25% !important;
+    }
 }
 
 
-@media only screen and (max-width: 600px){
+@media only screen and (max-width: 600px) {
     body {
         background-position: right !important;
     }
@@ -151,10 +162,14 @@ img {
     }
 
     .navbar {
-        display: none!important;
+        display: none !important;
     }
-
+    #wrapperCl{
+        top: 18% !important;
+    }
 }
+
+
 
 @media only screen and (max-width: 480px){
     body {
@@ -175,6 +190,12 @@ img {
     }
     .navbar {
         display: none!important;
+    }
+    #text1 {
+        font-size: 30px !important;
+    }
+    #wrapperCl{
+        top: 16% !important;
     }
 }
 
@@ -197,6 +218,12 @@ img {
     }
     .navbar {
         display: none!important;
+    }
+    #text1{
+        font-size: 25px !important;
+    }
+    #wrapperCl{
+        top: 12% !important;
     }
 }
 
