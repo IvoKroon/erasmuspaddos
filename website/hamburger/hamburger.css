@@ -12,9 +12,6 @@
     transform: rotate(45deg);
 }
 
-.icon {
-     display: none !important;
- }
 
 .mid-animate {
     opacity: 0;
