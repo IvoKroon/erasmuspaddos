@@ -119,8 +119,10 @@ Stage.prototype.checkPoint = function(x, y, zone) {
 
 
 Stage.prototype.LMMoved = function(handX, handY) {
+    var that = this;
+
     this.hitZones.forEach(function(zone) {
-        this.checkPoint(handX, handY, zone);
+        that.checkPoint(handX, handY, zone);
     });
 };
 
@@ -255,6 +257,8 @@ HarpString.prototype.strum = function() {
     this._strumForce = 20;
     this.isGlowing = true;
     this.playTone();
+
+    iosocket.emit('stringtouched', this.id);
 };
 
 
@@ -568,7 +572,4 @@ StringInstrument.prototype.render = function() {
     }
 };
 
-
-
-
-var harp = new StringInstrument("stage", "strings", 16, 6);
+var harp = new StringInstrument("stage", "strings", 16, 2);

@@ -64,7 +64,6 @@ Button.prototype.hovered = function () {
         this.colorTransition();
 
         if (this.fill === COLOR_GREEN_RGB) {
-            console.log("a");
             this.press();
         }
     }

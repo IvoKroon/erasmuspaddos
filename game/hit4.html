@@ -2,21 +2,59 @@
 <head>
     <meta charset="UTF-8">
     <title>Strings</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
     <link rel="stylesheet" href="style/style.css">
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 </head>
 <body>
-    <div id="wrapper">
-        <div id="timer1" class="timer">0</div>
-        <div id="timer2" class="timer">1</div>
-        <div id="timer3" class="timer">:</div>
-        <div id="timer4" class="timer">0</div>
-        <div id="timer5" class="timer">0</div>
-        <div id="stage"></div>
-        <canvas id="strings" width="1280px" height="700px"></canvas>
-    </div>
-    <div id="particles-js"></div>
+<!--<div id="sData">-->
+    <!--<h2>Data to Arduino</h2>-->
+    <!--<div id="btnHolder">-->
+        <!--<input type="checkbox" id="check" value="toggle"/><label for="check">Toggle LED</label>-->
+    <!--</div>-->
+<!--</div>-->
+<div id="wrapper">
+    <div id="timer1" class="timer">0</div>
+    <div id="timer2" class="timer">1</div>
+    <div id="timer3" class="timer">:</div>
+    <div id="timer4" class="timer">0</div>
+    <div id="timer5" class="timer">0</div>
+    <div id="stage"></div>
+    <canvas id="strings" width="1280px" height="700px"></canvas>
+</div>
 
-    <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
-    <script src="js/strings.js"></script>
+<script src="//js.leapmotion.com/leap-0.6.4.js"></script>
+<script src="js/socket-connection.js"></script>
+<script src="js/strings.js"></script>
+
+<!--<script>-->
+    <!--var iosocket;-->
+    <!--var toggleVal = 0;-->
+
+    <!--function initSocketIO() {-->
+        <!--iosocket = io.connect();-->
+        <!--iosocket.on('onconnection', function () {-->
+            <!--initButton();-->
+        <!--});-->
+    <!--}-->
+
+    <!--function initButton() {-->
+        <!--$("#check").button();-->
+    <!--}-->
+
+    <!--window.onload = function () {-->
+        <!--initSocketIO();-->
+    <!--};-->
+
+    <!--$(document).ready(function () {-->
+        <!--$('#check').click(function () {-->
+            <!--toggleVal += 1;-->
+            <!--toggleVal %= 2;-->
+            <!--iosocket.emit('buttonval', toggleVal);-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
 </body>
 </html>
