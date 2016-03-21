@@ -2,8 +2,8 @@ body {
     min-height: 100%;
     height: 100%;
     width: 100%;
-    margin:0 auto;
-    padding:0;
+    margin: 0 auto;
+    padding: 0;
     font-family: sans-serif;
     line-height: 1.8em;
     background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
@@ -32,8 +32,8 @@ h1 {
 }
 
 p {
-    color:white;
-    
+    color: white;
+
 }
 
 img {
@@ -83,45 +83,52 @@ img {
     .erasmusbrug {
         margin-left: 100px !important;
     }
+
     .logo {
         display: inline-block;
         position: absolute;
     }
 
-   .navbar {
-       float:right;
-       padding-left: 300px;
-   }
+    .navbar {
+        float: right;
+        padding-left: 300px;
+    }
 
-   h1 {
-       font-size: 50px;
-   }
+    h1 {
+        font-size: 50px;
+    }
 
-   #wrapper {
-       top: 35%;
-   }
-   .container {
-       margin-top: 8% !important;
-       margin-left: -5%!important;
-   }
+    #wrapper {
+        top: 35%;
+    }
+
+    .container {
+        margin-top: 8% !important;
+        margin-left: -5% !important;
+    }
 }
 
 @media only screen and (max-width: 800px) {
     body {
         background-position: right;
     }
+
     .navbar {
         padding-left: 500px !important;
     }
+
     li {
         margin-right: 30px !important;
     }
+
     .talen li {
         margin-left: 30px !important;
     }
+
     .erasmusbrug {
         margin-left: 320px !important;
     }
+
     .container {
         margin-top: 5% !important;
     }
@@ -131,28 +138,33 @@ img {
     body {
         background-position: right;
     }
+
     .navbar {
-        padding-left: 500px!important;
+        padding-left: 500px !important;
     }
+
     li {
 
-        margin-right: 30px ;
+        margin-right: 30px;
     }
+
     .talen li {
-        margin-left: 30px!important;
+        margin-left: 30px !important;
     }
+
     .erasmusbrug {
         margin-left: 350px !important;
     }
+
     .container {
         margin-top: 15% !important;
         padding-left: 0 !important;
     }
-    #wrapperCl{
+
+    #wrapperCl {
         top: 25% !important;
     }
 }
-
 
 @media only screen and (max-width: 600px) {
     body {
@@ -166,14 +178,13 @@ img {
     .navbar {
         display: none !important;
     }
-    #wrapperCl{
+
+    #wrapperCl {
         top: 18% !important;
     }
 }
 
-
-
-@media only screen and (max-width: 480px){
+@media only screen and (max-width: 480px) {
     body {
         background-position: right;
     }
@@ -182,7 +193,7 @@ img {
         font-size: 30px !important;
     }
 
-    #input1{
+    #input1 {
         width: 230px !important;
         margin-top: 20px;
     }
@@ -190,23 +201,26 @@ img {
     #input2 {
         padding: 3px 10px !important;
     }
+
     .navbar {
-        display: none!important;
+        display: none !important;
     }
+
     #text1 {
         font-size: 30px !important;
     }
-    #wrapperCl{
+
+    #wrapperCl {
         top: 16% !important;
     }
+
     .container {
-        margin-top: 5%!important;
+        margin-top: 5% !important;
         margin-left: -10% !important;
     }
 }
 
-
-@media only screen and (max-width: 320px){
+@media only screen and (max-width: 320px) {
     body {
         background: url('../image/bridgeSmall.jpg') no-repeat center center fixed;
     }
@@ -215,20 +229,23 @@ img {
         font-size: 25px !important;
     }
 
-    #input1{
+    #input1 {
         width: 130px !important;
     }
 
     #input2 {
         padding: 3px 10px !important;
     }
+
     .navbar {
-        display: none!important;
+        display: none !important;
     }
-    #text1{
+
+    #text1 {
         font-size: 25px !important;
     }
-    #wrapperCl{
+
+    #wrapperCl {
         top: 12% !important;
     }
 }
@@ -258,9 +275,7 @@ li {
     list-style: none;
 }
 
-
-.lineEffect
-{
+.lineEffect {
     cursor: pointer;
     display: inline-block;
     padding: 0px 0px 4px;
@@ -268,8 +283,7 @@ li {
     position: relative;
 }
 
-.lineEffect:before
-{
+.lineEffect:before {
     content: '';
     position: absolute;
     width: 100%;
@@ -289,11 +303,12 @@ li {
     transform: scaleX(1);
 }
 
-.talen  li{
+.talen li {
     margin-left: 50px;
     list-style: none;
     margin-right: 1px;
 }
+
 .logo {
     display: inline-block;
 
@@ -306,6 +321,7 @@ li {
     font-size: 13px;
     font-weight: bold;
 }
+
 /*einde header*/
 
 /*hamburger menu*/
@@ -313,9 +329,8 @@ li {
 .mobilenav {
     display: none;
 }
+
 /*einde hamburger menu*/
-
-
 
 /*sound pagina*/
 
@@ -338,12 +353,23 @@ li {
     text-align: center;
 }
 
-#text1{
+#text1 {
     font-size: 40px;
     text-shadow: 4px 4px #030000;
     letter-spacing: 0.25em;
 }
+
 /*einde sound pagina*/
 
 
 
+/*info pagina*/
+
+.info_text{
+    text-align: center;
+    margin-top: 5%;
+    line-height: 50px;
+    font-size: 20px;
+    background: rgba(5, 2, 2, 0.46);
+}
+/*einde info pagina*/

@@ -8,48 +8,87 @@
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/animate2.css">
     <link rel="stylesheet" href="css/hamburger.css">
-    <link rel="stylesheet" href="info.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
+    <title>Play the bridge</title>
 </head>
 
 <body>
 
-   <div id="img">
-       <img style="display: block;" src="image/sample.jpg" alt="sample">
-       <img style="display: block;" src="image/fotobeeld.png" alt="sample">
-        <div id="text">
-
-            <p>
-            <div>
-                Door middel van de prachtige Leap motion technieken hebben wij van Play the Bridge dit prachtig stukje techniek gebouwt.</div>
-            <div>
-                U vraagt zich vast af: Wat is dit en hoe werkt het?</div>
-            <div>
-                &nbsp;</div>
-            <div>
-                Nou wij maken gebruik van de leap motion, waardoor het apparaat uw handen registreerd en hierdoor uw handen virtueel op het beeldscherm zet.</div>
-            <div>
-                Doordat we dit kunnen doen, kunt u uw handen in de lucht laten bewegen en dit zorgt ervoor dat u de harp kan bespelen zonder iets aan te raken!</div>
-            <div>
-                &nbsp;</div>
-            <div>
-                De harp wordt dan bespeeld met noten die te horen zijn. Deze losse noten zijn gekoppeld aan de &quot;Snaren&quot; van de Erasmusbrug in Rotterdam.</div>
-            <div>
-                Dus bij elke noot die u speelt op de leap motion zal de kleur snaar van de erasmusbrug gaan gloeien.</div>
-            <div>
-                &nbsp;</div>
-            <div>
-                U kunt uw gemaakte muziek na het spelen opslaan en delen. Hierdoor kunt u uw eigen gemaakte harpmuziek later terugbeluisteren.</div>
-
-
-            </p>
-
-        </div>
+<nav class="navbar main">
+    <div class="logo">
+        <img class="erasmusbrug animated zoomIn" src="image/werasmusbrug.png" alt="erasmusbrug">
     </div>
 
+    <div class="navbar header animated fadeInDown ">
+        <ul class="nav navbar-nav menu ">
+            <li><span class="lineEffect">HOME</span></li>
+            <li class="skip">&#9679</li>
+            <li><span class="lineEffect">SOUNDS</span></li>
+            <li class="skip">&#9679</li>
+            <li><span class="lineEffect">INFO</span></li>
+        </ul>
+
+        <ul class="nav navbar-nav talen">
+            <li>
+                <div class="logoland">
+                    <img class="nl" src="image/nederlandse%20vlag.jpg" alt="nl vlag">
+                </div>
+            </li>
+            <li>
+                <div class="logoland">
+                    <img class="uk" src="image/engels%20vlag.jpg" alt="uk vlag"></div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="wrapperCl">
+    <div id="text1">
+        Nieuwste top 40
+    </div>
+    <div class="info_text">
+        Door middel van de prachtige Leap motion technieken hebben wij van Play the Bridge dit prachtig stukje techniek gebouwt.
+
+        U vraagt zich vast af: Wat is dit en hoe werkt het?
+
+        Nou wij maken gebruik van de leap motion, waardoor het apparaat uw handen registreerd en hierdoor uw handen virtueel op het beeldscherm zet.
+
+        Doordat we dit kunnen doen, kunt u uw handen in de lucht laten bewegen en dit zorgt ervoor dat u de harp kan bespelen zonder iets aan te raken!
+
+        De harp wordt dan bespeeld met noten die te horen zijn. Deze losse noten zijn gekoppeld aan de &quot;Snaren&quot; van de Erasmusbrug in Rotterdam.
+
+        Dus bij elke noot die u speelt op de leap motion zal de kleur snaar van de erasmusbrug gaan gloeien.
+
+        U kunt uw gemaakte muziek na het spelen opslaan en delen. Hierdoor kunt u uw eigen gemaakte harpmuziek later terugbeluisteren.
+    </div>
+</div>
 
 
+<!--hamburger menu-->
+<div class="mobilenav ">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Sounds</a></li>
+    <li><a href="#">Info</a></li>
+</div>
+
+<a href="javascript:void(0)" class="icon">
+    <div class="hamburger">
+        <div class="menui top-menu"></div>
+        <div class="menui mid-menu"></div>
+        <div class="menui bottom-menu"></div>
+    </div>
+</a>
+<!--einde hamburger menu-->
+
+
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/lettering.js"></script>
+<script src="js/textillate.js"></script>
+<script src="js/fittext.js"></script>
+<script src="js/hamburger.js"></script>
+<script src="js/main.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 </body>
 </html>
