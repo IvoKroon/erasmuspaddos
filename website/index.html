@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="stylesheet.css" />
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
@@ -14,11 +13,14 @@
 <body>
 
 <nav class="navbar main">
-    <div class="logo">
-        <img class="erasmusbrug animated zoomIn" src="image/werasmusbrug.png" alt="erasmusbrug">
+    <div class="col-md-3">
+        <div class="logo">
+            <img class="erasmusbrug animated zoomIn" src="image/werasmusbrug.png" alt="erasmusbrug">
+        </div>
     </div>
+
     <div class="navbar header animated fadeInDown ">
-        <ul class= " nav navbar-nav menu ">
+        <ul class="nav navbar-nav menu ">
             <li><span class="lineEffect">HOME</span></li>
             <li class="skip">&#9679</li>
             <li><span class="lineEffect">SOUNDS</span></li>
@@ -48,6 +50,23 @@
         </div>
 
     </div>
+
+<!--hamburger menu-->
+<div class="mobilenav ">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Sounds</a></li>
+    <li><a href="#">Info</a></li>
+</div>
+
+<a href="javascript:void(0)" class="icon">
+    <div class="hamburger">
+        <div class="menui top-menu"></div>
+        <div class="menui mid-menu"></div>
+        <div class="menui bottom-menu"></div>
+    </div>
+</a>
+<!--einde hamburger menu-->
+
 
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="js/jquery.js"></script>

@@ -100,6 +100,13 @@ img {
    #wrapper {
        top: 35%;
    }
+    .icon{
+        display: none !important;
+    }
+
+    .mobilenav {
+        display: none !important;
+    }
 
 }
 
@@ -119,6 +126,13 @@ img {
     .erasmusbrug {
         margin-left: 320px !important;
     }
+    .icon{
+        display: none !important;
+    }
+
+    .mobilenav {
+        display: none !important;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -129,6 +143,7 @@ img {
         padding-left: 500px!important;
     }
     li {
+        display:none !important;
         margin-right: 30px !important;
     }
     .talen li {
@@ -136,6 +151,12 @@ img {
     }
     .erasmusbrug {
         margin-left: 350px !important;
+    }
+    .icon{
+        display: none !important;
+    }
+    .mobilenav {
+        display: none !important;
     }
 }
 
@@ -255,15 +276,23 @@ li {
 
 }
 
-
 .header {
     float: right;
     width: 1050px;
     margin-top: 13px;
     font-size: 13px;
     font-weight: bold;
-
 }
 
-
 /*einde header*/
+
+/*hamburger menu*/
+/*Maakt het icon onzichtbaar op normaal scherm*/
+.icon{
+    display: none !important;
+}
+
+.mobilenav {
+    display: none !important;
+}
+/*einde hamburger menu*/
