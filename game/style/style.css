@@ -1,0 +1,64 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: rgb(16, 16, 16);
+    height: 100%;
+    color: rgba(149, 255, 20, 0);
+    text-align: center;
+    font-size: 24px;
+    font-family: 'Helvetica',sans-serif;
+}
+
+#wrapper {
+    position: relative;
+    width: 100%;
+}
+
+#stage {
+    position: absolute;
+    width: 100%;
+    height: 700px;
+    z-index: 10;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#strings {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+}
+
+.timer {
+    font-size: 4em;
+    color: white;
+    letter-spacing: .1em;
+    position: absolute;
+    top: 25px;
+}
+
+#timer1 {
+    left: 35.4%;
+}
+
+#timer2 {
+    left: 41.5%;
+}
+
+#timer3 {
+    left: 48.5%;
+}
+
+#timer4 {
+    left: 53.6%;
+}
+
+#timer5 {
+    left: 59.7%;
+}
