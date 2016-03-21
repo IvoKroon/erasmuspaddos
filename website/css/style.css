@@ -282,12 +282,12 @@ li {
 }
 /*einde hamburger menu*/
 
+
+
 /*sound pagina*/
 
-
 .container {
-    min-height: 100%;
-    background: white;
+    margin-top: 5%;
 }
 
 .soundcloud {
@@ -295,14 +295,20 @@ li {
     margin-top: 5px;
 }
 
-#tekst1 {
+#wrapperCl {
     position: absolute;
     margin: auto;
-    top: 20%;
+    top: 28%;
     left: 5%;
     right: 5%;
     width: 90%;
     text-align: center;
+}
+
+#text1{
+    font-size: 40px;
+    text-shadow: 4px 4px #030000;
+    letter-spacing: 0.25em;
 }
 /*einde sound pagina*/
 
