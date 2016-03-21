@@ -1,7 +1,6 @@
 /**
  * Created by Daphne on 21/03/16.
  */
-// HAMBURGLERv2
 
 function togglescroll() {
     $('body').on('touchstart', function(e) {
@@ -12,11 +11,10 @@ function togglescroll() {
 }
 
 $(document).ready(function() {
-    togglescroll()
+    togglescroll();
     $(".icon").click(function() {
         $(".mobilenav").fadeToggle(500);
         $(".top-menu").toggleClass("top-animate");
-        $("body").toggleClass("noscroll");
         $(".mid-menu").toggleClass("mid-animate");
         $(".bottom-menu").toggleClass("bottom-animate");
     });
@@ -28,7 +26,6 @@ $(document).keydown(function(e) {
     if (e.keyCode == 27) {
         $(".mobilenav").fadeOut(500);
         $(".top-menu").removeClass("top-animate");
-        $("body").removeClass("noscroll");
         $(".mid-menu").removeClass("mid-animate");
         $(".bottom-menu").removeClass("bottom-animate");
     }
