@@ -282,6 +282,29 @@ li {
 }
 /*einde hamburger menu*/
 
+/*sound pagina*/
+
+
+.container {
+    min-height: 100%;
+    background: white;
+}
+
+.soundcloud {
+    margin-left: 60px;
+    margin-top: 5px;
+}
+
+#tekst1 {
+    position: absolute;
+    margin: auto;
+    top: 20%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+}
+/*einde sound pagina*/
 
 
 
