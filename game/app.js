@@ -7,7 +7,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function (socket) {
-  // require('./server/socket-config.js')(socket);
+  // require('./socket-config.js')(socket);
 });
 
 
@@ -20,6 +20,9 @@ app.set('view engine', 'ejs');
 
 app.get('/callback', function(req, res) {
   res.render('index');
+})
+app.get('/game', function() {
+  res.render('game');
 })
 
 app.get('*', function(req, res) {
