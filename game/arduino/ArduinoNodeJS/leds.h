@@ -9,9 +9,11 @@ class Led
     Led(int pin);
     void turnOn();
     void turnOff();
-    int _pin;
     bool _isOn;
     unsigned long _timer;
+
+  private:
+    int _pin;
 };
 
 Led::Led(int pin)

@@ -15,10 +15,6 @@ var portName = '/dev/cu.usbmodem1411';
 // Listen to serial port
 serialPort = new SerialPort(portName, {
     baudrate: 9600
-    // dataBits: 8,
-    // parity: 'none',
-    // stopBits: 1,
-    // flowControl: false
 });
 
 // listen to events

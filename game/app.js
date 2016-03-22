@@ -6,6 +6,9 @@ var multer  = require('multer');
 var crypto = require('crypto');
 var path = require('path');
 var mime = require('mime');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 
 var storage = multer.diskStorage({
@@ -18,10 +21,14 @@ var storage = multer.diskStorage({
     });
   }
 });
+
+io.on('connection', function (socket) {
+  require('./server/socket-config.js')(socket);
+});
+
 var upload = multer({ storage: storage });
 var bodyParser = require('body-parser');
-
-var app = express();
+var PORT = process.env.PORT || 3000;
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -42,15 +49,16 @@ app.post('/uploadSound', upload.single('fffds'), function (req, res, next) {
       filePath: outputMp3
     });
 
-
   });
 
 });
 
 app.get('*', function(req, res) {
-  res.render('index');
+  res.render('game');
 });
 
 
-app.listen(3000);
-//
+server.listen(+PORT, function() {
+  console.log('listening on port %s, open your browser on localhost:%s', PORT, PORT);
+});
+

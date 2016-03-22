@@ -258,14 +258,13 @@ HarpString.prototype.strum = function() {
     this.isGlowing = true;
     this.playTone();
     
-    // arduino sockets start at 2
-    // has to be passed through as a string
+    // id starts at 1 here, arduino array starts at 0
+    // so we decrease id with 1
+    // also, has to be passed through as a string
     var val = this.id - 1;
     val = val + '';
 
     iosocket.emit('stringtouched', val);
-
-    console.log(val);
 };
 
 
