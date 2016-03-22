@@ -13,7 +13,14 @@ body {
     background-size: cover;
     color: white;
 }
-
+a {
+    color:white;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: none;
+    color:white;
+}
 h1 {
     color: white;
     font-size: 80px;
