@@ -257,8 +257,14 @@ HarpString.prototype.strum = function() {
     this._strumForce = 20;
     this.isGlowing = true;
     this.playTone();
+    
+    // id starts at 1 here, arduino array starts at 0
+    // so we decrease id with 1
+    // also, has to be passed through as a string
+    var val = this.id - 1;
+    val = val + '';
 
-    iosocket.emit('stringtouched', this.id);
+    iosocket.emit('stringtouched', val);
 };
 
 
