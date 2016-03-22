@@ -21,6 +21,8 @@ h1 {
     letter-spacing: 0.25em;
 }
 
+
+
 /*info pagina*/
 #info {
     position: absolute;
@@ -275,7 +277,7 @@ li {
     list-style: none;
 }
 
-.lineEffect {
+span {
     cursor: pointer;
     display: inline-block;
     padding: 0px 0px 4px;
@@ -283,7 +285,7 @@ li {
     position: relative;
 }
 
-.lineEffect:before {
+span:before {
     content: '';
     position: absolute;
     width: 100%;
@@ -297,10 +299,20 @@ li {
     transition: transform 0.2s ease-in;
 }
 
-.lineEffect:hover:before {
+span:hover:before {
     -webkit-transform: scaleX(1);
     -ms-transform: scaleX(1);
     transform: scaleX(1);
+}
+
+a{
+    color: white;
+    list-style: none;
+}
+a:hover{
+    list-style: none;
+    color:white;
+    text-decoration: none;
 }
 
 .talen li {
