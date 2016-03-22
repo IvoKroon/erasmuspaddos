@@ -1,7 +1,6 @@
 window.addEventListener('load', init);
 
 var iosocket;
-var toggleVal = 0;
 
 function init() {
     initSocketIO();
