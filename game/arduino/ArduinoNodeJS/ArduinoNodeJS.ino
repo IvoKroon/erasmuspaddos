@@ -4,6 +4,7 @@ int recVal = -1;
 String val = "";
 const int LEDS_AMOUNT = 16;
 Led* ledsArray[LEDS_AMOUNT];
+char* ledsCharArray[LEDS_AMOUNT];
 
 void setup() 
 {
@@ -35,7 +36,7 @@ void loop()
   // it will turn into a 0, which is the first pin, and turn it on
   if (val != "") {
     recVal = val.toInt();
-    val = "";
+    val = ""; 
   }
 
   // turn on LED
@@ -55,7 +56,7 @@ void loop()
     unsigned long diff = curTime - l->_timer;
     
     // turn off LED after some time
-    if (diff > 2000) {
+    if (diff > 2500) {
       l->turnOff();
     }
   } 
