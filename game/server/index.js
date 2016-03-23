@@ -32,13 +32,11 @@ socket.on('connection', function(socket)
 
         if(found.length > 0) {
             // console.log(' exists in value');
-            console.log(values);
+            // console.log(values);
         } else {
             values.push(data);
-            setTimeout(send.bind(this, data), 10);
+            setTimeout(send.bind(this, data), 5);
         }
-
-       // console.log(data);
 
     });
 });
@@ -51,6 +49,6 @@ function send(data) {
             values.splice(i, 1);
         }
     }
-    // console.log(data);
+    
     serialPort.write(data);
 }
