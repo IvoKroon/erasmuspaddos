@@ -18,4 +18,9 @@ if($_POST['type'] === 'GET_SOUND')
 	 $stmt->execute();
 	 $sounds = $stmt->fetchAll();
 	 echo json_encode(["status" => "ok", "payload" => $sounds]);
+} else if($_POST['type'] === 'GET_ALL_SOUNDS') {
+	$stmt = $pdo->prepare('SELECT * from sounds');
+	$stmt->execute();
+	$sounds = $stmt->fetchAll();
+	echo json_encode(["status" => "ok", "payload" => $sounds]);
 }
