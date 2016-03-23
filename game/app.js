@@ -61,7 +61,7 @@ app.get('/auth/soundcloud/callback',
 
 
 // game route
-app.get('/game', function() {
+app.get('/game', function(req, res) {
   res.render('game');
 });
 
@@ -87,7 +87,10 @@ app.post('/saveSound', function(req, res) {
   	var sql = 'INSERT INTO sounds (sound_url, created_at)VALUES(' + dbConnection.escape(uri) + ', ' + dbConnection.escape(created_at) +')';
 		dbConnection.query(sql, function(err, result) {
 			if(err) return res.send(err);
-				res.send('created!');
+				res.json({
+          'result': 'ok',
+          'code': result.insertId
+        });
 		});
 })
 

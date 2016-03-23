@@ -4,7 +4,7 @@ screencastify.setAppId('5741160238678016');
 // get tokens
 var CLIENT_ID = $("meta[name=SC_CLIENT_ID]").attr("content");
 var ACCESS_TOKEN = $("meta[name=SC_TOKEN]").attr("content");
-
+var codeContainer = $('#code');
 if(!ACCESS_TOKEN) console.warn("access token is empty");
 
 // get new recorder
@@ -32,6 +32,7 @@ function record() {
   }).then(function() {
     // START GAME HERE
     console.log('recording')
+    codeContainer.html('');
   });
 }
 // Get file if user has stopped recording
@@ -90,8 +91,7 @@ function saveSound(data) {
     url: '/saveSound',
     data: data,
     success: function(res) {
-      console.log(res);
-      console.log('saved in database!');
+      codeContainer.html('Your code is: ' + res.code);
     },
     error: function(err) {
       console.log('saving in database failed!');

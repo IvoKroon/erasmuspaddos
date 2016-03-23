@@ -28,7 +28,11 @@ h1 {
     letter-spacing: 0.25em;
 }
 
-
+.error {
+    color:red;
+    font-size: 18px;
+    display: none;
+}
 
 /*info pagina*/
 #info {
