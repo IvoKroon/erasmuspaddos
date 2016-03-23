@@ -11,16 +11,16 @@ var SoundCloudStrategy = require('passport-soundcloud').Strategy;
 
 // set variables
 var PORT = process.env.PORT || 3000;
-var CLIENT_ID = '520afab7d67f14318b21e33ffc25f092';
-var CLIENT_SECRET = 'e883058fe4fadc535cd15c640ed1aae9';
-
+global.CLIENT_ID = '520afab7d67f14318b21e33ffc25f092';
+global.CLIENT_SECRET = 'e883058fe4fadc535cd15c640ed1aae9';
+global.ACCESS_TOKEN = '';
 
 // require database connection
 require('./db-connection');
 
 // listen for socket connection
 io.on('connection', function (socket) {
-  // require('./socket-connection.js')(socket);
+  require('./socket-connection.js')(socket);
 });
 
 // set soundcloud strategy
@@ -31,6 +31,7 @@ passport.use(new SoundCloudStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
   	var sql = 'INSERT INTO soundcloud (access_token)VALUES('+ dbConnection.escape(accessToken) +')';
+		ACCESS_TOKEN = accessToken;
 		dbConnection.query(sql, function(err, result) {
 			if(err) return done(err);
 			return done(err, result);
@@ -69,30 +70,12 @@ app.get('/', function(req, res) {
 	// get access token from db
   dbConnection.query('SELECT access_token from soundcloud', function(err, results) {
   	if(err)  return res.send(err);
-	  var scToken = results.length > 0 ? results[results.length -1].access_token : null;
-	  console.log(scToken);
-  	  res.render('index', {
-  	  	SC_TOKEN: scToken,
-  	  	CLIENT_ID: CLIENT_ID
-  	  });
+		ACCESS_TOKEN =results.length > 0 ? results[results.length -1].access_token : null;
+		if(!ACCESS_TOKEN) console.warn('No acces_token found, authenticate with http://localhost:3000/auth/soundcloud');
+		res.render('index');
   })
 
 });
-
-app.post('/saveSound', function(req, res) {
-  	
-  	var uri = req.body.uri;
-  	var created_at = req.body.created_at;
-  	if(!uri) return res.send('no uri found');
-  	var sql = 'INSERT INTO sounds (sound_url, created_at)VALUES(' + dbConnection.escape(uri) + ', ' + dbConnection.escape(created_at) +')';
-		dbConnection.query(sql, function(err, result) {
-			if(err) return res.send(err);
-				res.json({
-          'result': 'ok',
-          'code': result.insertId
-        });
-		});
-})
 
 
 // start server
