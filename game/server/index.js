@@ -6,7 +6,7 @@ var io = require('socket.io');
 var server = http.createServer();
 server.listen(3000);
 var socket = io.listen(server);
-
+var values = [];
 
 // serial port
 var serialPort;
@@ -26,7 +26,31 @@ socket.on('connection', function(socket)
 {
     socket.on('stringtouched', function(data)
     {
-        console.log(data);
-        serialPort.write(data);
+        var found = values.filter(function(val) {
+            return val == data;
+        });
+
+        if(found.length > 0) {
+            // console.log(' exists in value');
+            console.log(values);
+        } else {
+            values.push(data);
+            setTimeout(send.bind(this, data), 10);
+        }
+
+       // console.log(data);
+
     });
 });
+
+function send(data) {
+    // delete values[values.indexOf(data)];
+    for(var i = 0; i < values.length; i++) {
+
+        if(values[i] == data) {
+            values.splice(i, 1);
+        }
+    }
+    // console.log(data);
+    serialPort.write(data);
+}
