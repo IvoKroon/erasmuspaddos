@@ -6,6 +6,9 @@
 var HAND_Z_MIN = 700,
     HAND_Z_MAX = 1800;
 
+var canvas = document.getElementById("strings"),
+    ctx = canvas.getContext('2d');
+
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -277,7 +280,7 @@ HarpString.prototype.glowStringColor = function () {
 };
 
 
-HarpString.prototype.render = function(ctx, stringNum) {
+HarpString.prototype.render = function(stringNum) {
     // determine color of glow
     this.shadowColor = this.glowStringColor();
 
@@ -350,7 +353,7 @@ function Circle(x, y, z, radius, start, end, dir, fill) {
 }
 
 
-Circle.prototype.render = function(ctx) {
+Circle.prototype.render = function() {
     ctx.globalCompositeOperation = "lighter";
     ctx.shadowBlur = 0;
     ctx.beginPath();
@@ -373,7 +376,7 @@ function Pointer(x, y, z, radius, start, end, dir, fill) {
     this.direction = dir;
     this.fill = fill;
 
-    this.trailNum = 10;
+    this.trailNum = 2;
     this.trails = [];
     this.createTrail();
 
@@ -383,10 +386,12 @@ function Pointer(x, y, z, radius, start, end, dir, fill) {
 
 Pointer.prototype.createTrail = function() {
     for (var i = 0; i < this.trailNum; i++) {
-        var r = Math.floor(Math.random() * 255),
-            g = Math.floor(Math.random() * 255),
-            b = Math.floor(Math.random() * 255),
-            color = "rgb(" + r + "," + g + "," + b + ")";
+        // var r = Math.floor(Math.random() * 255),
+        //     g = Math.floor(Math.random() * 255),
+        //     b = Math.floor(Math.random() * 255),
+        //     color = "rgb(" + r + "," + g + "," + b + ")";
+
+        var color = "rgba(255,255,255,0.1)";
 
         var c = new Circle(this.x, this.y, HAND_Z_MIN, this.radius, this.start, this.end, this.direction, color);
         this.trails.push(c);
@@ -398,12 +403,10 @@ Pointer.prototype.createTrail = function() {
 
 
 
-function Input(amount, canvasID) {
+function Input(amount) {
     this.hands = [];
     this.handsNum = amount;
-
-    this.canvas = document.getElementById(canvasID);
-    this.ctx = this.canvas.getContext('2d');
+    this.doRenderHands = true;
 
     this.create();
 
@@ -412,21 +415,21 @@ function Input(amount, canvasID) {
 
 
 Input.prototype.create = function() {
-    var x = this.canvas.width/2 - 82,
-        y = this.canvas.height/2;
+    var x = canvas.width/2 - 82,
+        y = canvas.height/2;
 
     var hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
     this.hands.push(hand);
 
-    x = this.canvas.width/2 + 74;
-    y = this.canvas.height/2;
+    x = canvas.width/2 + 74;
+    y = canvas.height/2;
 
     hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
     this.hands.push(hand);
 };
 
 
-Input.prototype.getPos = function (canvas, normalizedPosition, id) {
+Input.prototype.getPos = function (normalizedPosition, id) {
     var pos = [];
 
     this.hands[id].x = canvas.width * normalizedPosition[0];
@@ -444,8 +447,6 @@ Input.prototype.getPos = function (canvas, normalizedPosition, id) {
 
 
 Input.prototype.draw = function(h, handZ) {
-    var ctx = this.ctx;
-
     h.displayOpacity = 2.75 - 0.0025 * handZ;
     if (h.displayOpacity < 0.5)
         h.displayOpacity = 0.5;
@@ -468,34 +469,32 @@ Input.prototype.draw = function(h, handZ) {
 };
 
 
-Input.prototype.drawTrail = function(h, handX, handY) {
+Input.prototype.drawTrail = function(hand, handX, handY) {
     // grab trail array of this pointer (hand)
-    var t = h.trails;
+    var t = hand.trails;
 
     for (var i = 0; i < t.length; i++) {
         var t1 = t[i],
             t2 = t[i-1];
 
-        t[t.length - 1].render(this.ctx);
+        t[t.length - 1].render();
 
         t[t.length - 1].x = handX;
         t[t.length - 1].y = handY;
-        t1.render(this.ctx);
+        t1.render();
 
         if(i > 0) {
             t2.x += (t1.x - t2.x) * 0.6;
             t2.y += (t1.y - t2.y) * 0.6;
         }
     }
+
+    // console.log("handX: " + handX + " trailendX: " + t[t.length - 1].x);
 };
 
 
 Input.prototype.render = function(id, handX, handY, handZ) {
-    var h = this.hands[id],
-        ctx = this.ctx;
-
-    // render and draw trail behind pointer
-    this.drawTrail(h, handX, handY);
+    var h = this.hands[id];
 
     // create circle and position it
     ctx.beginPath();
@@ -508,22 +507,21 @@ Input.prototype.render = function(id, handX, handY, handZ) {
     }
 
     ctx.closePath();
+
+    // render and draw trail
+    this.drawTrail(h, handX, handY);
 };
 
 
 
 
-function StringInstrument(stageID, canvasID, stringNum, handsNum) {
+function StringInstrument(stageID, stringNum, handsNum) {
     this.strings = [];
     this.stringNum = stringNum;
     this.stage = new Stage(stageID);
 
-    this.canvas = document.getElementById(canvasID);
-    this.ctx = this.canvas.getContext('2d');
-
-    this.doRenderHands = true;
     this.handsNum = handsNum;
-    this.input = new Input(this.handsNum, canvasID);
+    this.input = new Input(this.handsNum);
 
     this.clr = new Leap.Controller();
     this.clr.connect();
@@ -531,7 +529,7 @@ function StringInstrument(stageID, canvasID, stringNum, handsNum) {
     this.create();
 
     // these will both continue to loop
-    this.renderLeapMotion(canvasID);
+    this.renderLeapMotion();
     this.render();
 
     return this;
@@ -551,13 +549,12 @@ StringInstrument.prototype.create = function() {
 
 // MOVE TO STAGE?
 // NOTHING TO DO WITH THE STRINGS
-StringInstrument.prototype.renderLeapMotion = function(canvasID) {
-    var that = this,
-        canvasElement = document.getElementById(canvasID);
+StringInstrument.prototype.renderLeapMotion = function() {
+    var that = this;
 
     this.clr.on("frame", function (frame) {
         if (frame.pointables.length > 0) {
-            that.doRenderHands = true;
+            that.input.doRenderHands = true;
 
             //Get a pointable (hand) and normalize the index finger's dip position
             for (var i = 0, len = frame.hands.length; i < len; i++)
@@ -572,20 +569,23 @@ StringInstrument.prototype.renderLeapMotion = function(canvasID) {
                     normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
                 // Convert the normalized coordinates to span the canvas
-                var handPos = that.input.getPos(canvasElement, normalizedPosition, i);
+                var handPos = that.input.getPos(normalizedPosition, i);
 
                 // loop through all objects
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++)
                 {
                     // only check string collision inside canvas and in Z-range
-                    var isInRange = handPos.x > 0 && handPos.y < canvasElement.width && handPos.z < HAND_Z_MIN;
+                    var isInRange = handPos.x > 0
+                     && handPos.y < canvas.width
+                     && handPos.z < HAND_Z_MIN;
+
                     if (isInRange) {
                         that.stage.LeapMotionMoved(handPos.x, handPos.y);
                     }
                 }
             }
         } else {
-            that.doRenderHands = false;
+            that.input.doRenderHands = false;
         }
     });
 };
@@ -603,19 +603,19 @@ StringInstrument.prototype.render = function() {
     this.stage.timer();
 
     // clear screen
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render strings
     for (var i = 0; i < this.stringNum; i++) {
-        this.strings[i].render(this.ctx, i);
+        this.strings[i].render(i);
     }
 
     // render hands
-    if (this.doRenderHands) {
+    if (this.input.doRenderHands) {
         for (i = 0; i < this.handsNum; i++) {
             this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
         }
     }
 };
 
-var harp = new StringInstrument("stage", "strings", 16, 2);
+var harp = new StringInstrument("stage", 16, 2);
