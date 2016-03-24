@@ -415,13 +415,13 @@ Input.prototype.create = function() {
     var x = this.canvas.width/2 - 82,
         y = this.canvas.height/2;
 
-    var hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, 1, "rgb(0,0,0)");
+    var hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
     this.hands.push(hand);
 
     x = this.canvas.width/2 + 74;
     y = this.canvas.height/2;
 
-    hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, 1, "rgb(0,0,0)");
+    hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
     this.hands.push(hand);
 };
 
