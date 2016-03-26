@@ -1,0 +1,27 @@
+{
+  "home": {
+    "head:title": "Paddos - Casa",
+    "title": "Play the bridge"
+  },
+
+  "info": {
+    "head:title": "Paddos - INFORMACIÓN",
+    "title": "Información",
+    "content": "A través de la tecnología de la hermosa Leap Motion, tenemos que jugar el puente de esta maravillosa obra de ingeniería construida. Vas a preguntarse: ¿Qué es y cómo funciona? Así, se utiliza el movimiento de salto, y el dispositivo registrado para comprometer sus manos y poner sus manos en la pantalla virtual. Debido a que podemos hacer esto, usted puede conseguir sus manos en el aire y este movimiento asegura que se puede tocar el arpa sin tocar nada! El arpa se jugará con las notas que se escuchan. Estas notas sueltas están vinculados a las \"cadenas\" del Puente Erasmus en Rotterdam. Así, con cada nota que toque en la cadena de color salto de movimiento o puente Erasmus se iluminará. Puede guardar su música creada después de jugar y compartir. Esto le permite escuchar más tarde en su música de arpa hecha en casa."
+  },
+
+  "sounds": {
+    "head:title": "Paddos - Pistas",
+    "title": "Reciente lista de los 40"
+  },
+
+  "navigation": {
+    "link:home": "CASA",
+    "link:sounds": "PISTAS",
+    "link:info": "INFORMACIÓN"
+  },
+
+  "_meta": {
+    "locale": "es"
+  }
+}

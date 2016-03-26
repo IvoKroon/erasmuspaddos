@@ -1,0 +1,27 @@
+{
+  "home": {
+    "head:title": "Paddos - Home",
+    "title": "Play the bridge"
+  },
+
+  "info": {
+    "head:title": "Paddos - Info",
+    "title": "Info",
+    "content": "Through the beautiful Leap Motion technology, we have to play the Bridge this wonderful piece of engineering gebouwt. You're going to wonder: What is this and how does it work? Well, we use the leap motion, and the device registered your hands and will put your hands on the virtual screen. Because we can do this, you can get your hands in the air and this move ensures that you can play the harp without touching anything! The harp will be played with notes that are heard. These loose notes are linked to the \"strings\" of the Erasmus Bridge in Rotterdam. So with every note you play on the leap motion color string of Erasmus bridge will glow. You can save your created music after playing and sharing. This allows you to later listen to your homemade harp music."
+  },
+
+  "sounds": {
+    "head:title": "Paddos - Sounds",
+    "title": "Recent top 40 list"
+  },
+
+  "navigation": {
+    "link:home": "HOME",
+    "link:sounds": "SOUNDS",
+    "link:info": "INFO"
+  },
+
+  "_meta": {
+    "locale": "en"
+  }
+}

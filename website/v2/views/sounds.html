@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="<%=  i18n('_meta', 'locale') %>">
+<head>
+    <%- include('partials/styles.html') %>
+    <title><%=  i18n('sounds', 'title') %></title>
+</head>
+<body>
+    <%- include('partials/navigation.html') %>
+
+    <div id="wrapperCl">
+        <div id="text1">
+           <%=  i18n('sounds', 'title') %>
+        </div>
+
+
+        <div class="container">
+            <div class="row" id="soundsContainer">
+                <% sounds.forEach(function(sound) { %>
+                <div class="col-md-6 col-sm-12">'
+                    <%- include('partials/player.html', {sound: sound}) %>
+                </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <%- include('partials/scripts.html') %>
+</body>
+</html>

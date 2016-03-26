@@ -1,0 +1,390 @@
+body {
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    font-family: sans-serif;
+    line-height: 1.8em;
+    background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: white;
+}
+
+h1 {
+    color: white;
+    font-size: 80px;
+    text-shadow: 4px 4px #030000;
+    letter-spacing: 0.25em;
+}
+
+.error {
+    color:white;
+    font-size: 18px;
+}
+
+/*info pagina*/
+#info {
+    position: absolute;
+    margin: auto;
+    top: 30%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+}
+
+p {
+    color: white;
+
+}
+
+img {
+    padding: 5px;
+    width: 30%;
+    float: left;
+}
+
+/*einde info pagina*/
+
+/*Home pagina*/
+#wrapper {
+    position: absolute;
+    margin: auto;
+    top: 30%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+}
+
+#input1 {
+    background-color: rgba(0, 0, 0, 0.52);
+    color: white;
+    padding-left: 10px;
+    margin-top: 50px;
+    width: 250px;
+    height: 35px;
+}
+
+#input2 {
+    background-color: rgba(2, 2, 2, 0.44);
+    color: white;
+    margin-left: 10px;
+    border: none;
+    padding: 3px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    height: 35px;
+    margin-bottom: -12px;
+}
+
+/*einde home pagina*/
+
+@media only screen and (max-width: 1024px) {
+    .erasmusbrug {
+        margin-left: 100px !important;
+    }
+
+    .logo {
+        display: inline-block;
+        position: absolute;
+    }
+
+    .navbar {
+        float: right;
+        padding-left: 300px;
+    }
+
+    h1 {
+        font-size: 50px;
+    }
+
+    #wrapper {
+        top: 35%;
+    }
+
+    .container {
+        margin-top: 8% !important;
+        margin-left: -5% !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    body {
+        background-position: right;
+    }
+
+    .navbar {
+        padding-left: 500px !important;
+    }
+
+    li {
+        margin-right: 30px !important;
+    }
+
+    .talen li {
+        margin-left: 30px !important;
+    }
+
+    .erasmusbrug {
+        margin-left: 320px !important;
+    }
+
+    .container {
+        margin-top: 5% !important;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    body {
+        background-position: right;
+    }
+
+    .navbar {
+        padding-left: 500px !important;
+    }
+
+    li {
+
+        margin-right: 30px;
+    }
+
+    .talen li {
+        margin-left: 30px !important;
+    }
+
+    .erasmusbrug {
+        margin-left: 350px !important;
+    }
+
+    .container {
+        margin-top: 15% !important;
+        padding-left: 0 !important;
+    }
+
+    #wrapperCl {
+        top: 25% !important;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        background-position: right !important;
+    }
+
+    h1 {
+        font-size: 40px !important;
+    }
+
+    .navbar {
+        display: none !important;
+    }
+
+    #wrapperCl {
+        top: 18% !important;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    body {
+        background-position: right;
+    }
+
+    h1 {
+        font-size: 30px !important;
+    }
+
+    #input1 {
+        width: 230px !important;
+        margin-top: 20px;
+    }
+
+    #input2 {
+        padding: 3px 10px !important;
+    }
+
+    .navbar {
+        display: none !important;
+    }
+
+    #text1 {
+        font-size: 30px !important;
+    }
+
+    #wrapperCl {
+        top: 16% !important;
+    }
+
+    .container {
+        margin-top: 5% !important;
+        margin-left: -10% !important;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    body {
+        background: url('../image/bridgeSmall.jpg') no-repeat center center fixed;
+    }
+
+    h1 {
+        font-size: 25px !important;
+    }
+
+    #input1 {
+        width: 130px !important;
+    }
+
+    #input2 {
+        padding: 3px 10px !important;
+    }
+
+    .navbar {
+        display: none !important;
+    }
+
+    #text1 {
+        font-size: 25px !important;
+    }
+
+    #wrapperCl {
+        top: 12% !important;
+    }
+}
+
+/*// header*/
+
+.erasmusbrug {
+    height: 130px;
+    width: 130px;
+    margin-left: 250px;
+    margin-top: 20px;
+}
+
+.uk {
+
+    width: 30px;
+}
+
+.nl {
+
+    width: 30px;
+}
+
+li {
+    margin-right: 50px;
+    margin-top: 50px;
+    list-style: none;
+}
+
+span {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0px 0px 4px;
+    margin: 0px 10px 0px;
+    position: relative;
+}
+
+span:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    border-bottom: 1px solid orange;
+    bottom: 2px;
+    -webkit-transform: scaleX(0);
+    -ms-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transition: -webkit-transform 0.2s ease-in;
+    transition: transform 0.2s ease-in;
+}
+
+span:hover:before {
+    -webkit-transform: scaleX(1);
+    -ms-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+a{
+    color: white;
+    list-style: none;
+}
+a:hover{
+    list-style: none;
+    color:white;
+    text-decoration: none;
+}
+
+.talen li {
+    margin-left: 50px;
+    list-style: none;
+    margin-right: 1px;
+}
+
+.logo {
+    display: inline-block;
+
+}
+
+.header {
+    float: right;
+    width: 1050px;
+    margin-top: 13px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/*einde header*/
+
+/*hamburger menu*/
+
+.mobilenav {
+    display: none;
+}
+
+/*einde hamburger menu*/
+
+/*sound pagina*/
+
+.container {
+    margin-top: 5%;
+}
+
+.soundcloud {
+    margin-left: 60px;
+    margin-top: 5px;
+}
+
+#wrapperCl {
+    position: absolute;
+    margin: auto;
+    top: 28%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+}
+
+#text1 {
+    font-size: 40px;
+    text-shadow: 4px 4px #030000;
+    letter-spacing: 0.25em;
+}
+
+/*einde sound pagina*/
+
+
+
+/*info pagina*/
+
+.info_text{
+    text-align: center;
+    margin-top: 5%;
+    line-height: 50px;
+    font-size: 20px;
+    background: rgba(5, 2, 2, 0.46);
+}
+/*einde info pagina*/

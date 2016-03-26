@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="<%=  i18n('_meta', 'locale') %>">
+<head>
+    <%- include('partials/styles.html') %>
+    <title><%=  i18n('home', 'title') %></title>
+</head>
+<body>
+    <%- include('partials/navigation.html') %>
+    <div id="wrapper">
+        <div id="title">
+            <h1>Play the bridge</h1>
+        </div>
+
+        <div id="code">
+            <form action="/website" method="GET">
+                <label for="input1" class="error" id="codeError">
+                    <% if(notFound){ %>
+                        <div>Sound was'nt found in our database.</div>
+                    <% } %>
+                </label>
+                <input id="input1" type="text" name="code">
+                <input id="input2" type="image" src="image/play.png" alt="Submit" >
+                <br />
+            </form>
+            <div id="player-wrapper">
+                <% if(sound){ %>
+                    <%- include('partials/player.html', {sound:sound}) %>
+                <% } %>
+            </div>
+        </div>
+
+    </div>
+    <%- include('partials/scripts.html') %>
+    <script src="js/website/home.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ var exec = require('child_process').exec;
 var request = require('request');
 
 // set minutes here
-var minutes = 1 * 60;
+var minutes = 1 * 5;
 
 
 module.exports = function(socket) {

@@ -8,6 +8,7 @@ var io = require('socket.io')(server);
 var request = require('request');
 var passport = require('passport');
 var SoundCloudStrategy = require('passport-soundcloud').Strategy;
+var ejs = require('ejs');
 
 // set variables
 var PORT = process.env.PORT || 3000;
@@ -42,10 +43,9 @@ passport.use(new SoundCloudStrategy({
 // set express middleware
 app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.set('view engine', 'html');
+app.engine('html',  ejs.renderFile);
 app.use(express.static('./public'));
-app.set('view engine', 'ejs');
-
-
 
 //////////////////////////////////////
 //						ROUTES
@@ -61,22 +61,17 @@ app.get('/auth/soundcloud/callback',
 });
 
 
-// game route
-app.get('/game', function(req, res) {
-  res.render('game');
-});
-
 app.get('/', function(req, res) {
 	// get access token from db
   dbConnection.query('SELECT access_token from soundcloud', function(err, results) {
   	if(err)  return res.send(err);
 		ACCESS_TOKEN =results.length > 0 ? results[results.length -1].access_token : null;
 		if(!ACCESS_TOKEN) console.warn('No acces_token found, authenticate with http://localhost:3000/auth/soundcloud');
-		res.render('index');
+		res.render('index', {
+      title: 'Home'
+    });
   })
-
 });
-
 
 // start server
 server.listen(+PORT, function() {

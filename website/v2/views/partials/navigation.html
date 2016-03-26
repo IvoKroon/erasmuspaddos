@@ -1,0 +1,49 @@
+<nav class="navbar main">
+    <div class="logo">
+        <img class="erasmusbrug animated zoomIn" src="/image/werasmusbrug.png" alt="erasmusbrug">
+    </div>
+
+    <div class="navbar header animated fadeInDown ">
+        <ul class="nav navbar-nav menu ">
+            <li><span><a href="/"><%= i18n('navigation', 'link:home') %></a></span></li>
+            <li class="skip">&#9679</li>
+            <li><span><a href="/sounds"><%= i18n('navigation', 'link:sounds') %></a></span></li>
+            <li class="skip">&#9679</li>
+            <li><span><a href="/info"><%= i18n('navigation', 'link:info') %></a></span></li>
+        </ul>
+        <ul class="nav navbar-nav talen">
+            <li>
+                <div class="logoland">
+                    <a href="#" onclick="switchLang('nl');"><img class="nl" src="/image/nederlandse%20vlag.jpg" alt="nl vlag"></a>
+
+                </div>
+            </li>
+            <li>
+                <div class="logoland">
+                    <a href="#" onclick="switchLang('en');"><img class="uk" src="/image/engels%20vlag.jpg" alt="uk vlag"></a>
+                </div>
+            </li>
+            <li>
+                <div class="logoland">
+                    <a href="#" onclick="switchLang('es');"><img class="uk" src="/image/Spanje_vlag.jpg" alt="es vlag"></a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!--hamburger menu-->
+<div class="mobilenav ">
+    <li><a href="/"><%= i18n('navigation', 'link:home') %></a></li>
+    <li><a href="/sounds"><%= i18n('navigation', 'link:sounds') %></a></li>
+    <li><a href=/info"><%= i18n('navigation', 'link:info') %></a></li>
+</div>
+
+<a href="javascript:void(0)" class="icon">
+    <div class="hamburger">
+        <div class="menui top-menu"></div>
+        <div class="menui mid-menu"></div>
+        <div class="menui bottom-menu"></div>
+    </div>
+</a>
+<!--einde hamburger menu-->
