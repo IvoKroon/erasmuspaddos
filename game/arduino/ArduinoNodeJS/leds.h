@@ -26,13 +26,15 @@ Led::Led(int pin)
   _timer = millis();
 }
 
-void Led::turnOn() {
+void Led::turnOn() 
+{
   digitalWrite(_pin, HIGH);
   _timer = millis();
   _isOn = true;
 }
 
-void Led::turnOff() {
+void Led::turnOff() 
+{
   digitalWrite(_pin, LOW);
   _isOn = false;
 }

@@ -3,9 +3,11 @@
  */
 
 // globals
-var HAND_Z_MIN = 400,
-    HAND_Z_MID = 900,
+var HAND_Z_MIN = 700,
     HAND_Z_MAX = 1800;
+
+var canvas = document.getElementById("strings"),
+    ctx = canvas.getContext('2d');
 
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
@@ -118,7 +120,7 @@ Stage.prototype.checkPoint = function(x, y, zone) {
 };
 
 
-Stage.prototype.LMMoved = function(handX, handY) {
+Stage.prototype.LeapMotionMoved = function(handX, handY) {
     var that = this;
 
     this.hitZones.forEach(function(zone) {
@@ -184,55 +186,10 @@ Rect.prototype.inside = function(x,y) {
 };
 
 
-Rect.prototype.midLine = function() {
-    if (this.middle)
-        return this.middle;
-
-    this.middle = [
-        {x: this.x, y: this.y + this.height / 2},
-        {x: this.x + this.width, y: this.y + this.height / 2}
-    ];
-
-    return this.middle;
-};
-
-
-Rect.prototype.intercept = function(x1, y1, x2, y2) {
-    var segment = this.midLine(),
-        start = {x: x1, y: y1},
-        end = {x: x2, y: y2};
-
-    return this.intersectLine(segment[0], segment[1], start, end);
-};
-
-
-//-- http://www.kevlindev.com/gui/math/intersection/Intersection.js
-Rect.prototype.intersectLine = function(a1, a2, b1, b2) {
-    var ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x),
-        ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x),
-        u_b  = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
-
-    if (u_b != 0) {
-        var ua = ua_t / u_b,
-            ub = ub_t / u_b;
-
-        if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
-            return true;
-        }
-    } else {
-        if (ua_t == 0 || ub_t == 0) {
-            return false;   //-- Coincident
-        } else {
-            return false;   //-- Parallel
-        }
-    }
-};
-
-
 
 
 function HarpString(rect, id) {
-    this.id = id + 1;
+    this.id = id;
     this.x = rect.x;
     this.y = rect.y;
     this.width = rect.width;
@@ -240,7 +197,7 @@ function HarpString(rect, id) {
 
     this._strumForce = 0;
     this.a = 0;
-    this.sound = new Audio("sounds/Soundfiles/Toon" + this.id + ".mp3");
+    this.sound = new Audio("sounds/Soundfiles/Toon" + (this.id + 1) + ".mp3");
     this.sound.preload = "auto";
 
     this.red = 0;
@@ -257,13 +214,12 @@ HarpString.prototype.strum = function() {
     this._strumForce = 20;
     this.isGlowing = true;
     this.playTone();
-    
-    // id starts at 1 here, arduino array starts at 0
-    // so we decrease id with 1
-    // also, has to be passed through as a string
-    var val = this.id - 1;
-    val = val + '';
+    this.sendDataToArduino();
+};
 
+
+HarpString.prototype.sendDataToArduino = function() {
+    var val = this.id + '';
     iosocket.emit('stringtouched', val);
 };
 
@@ -300,8 +256,8 @@ HarpString.prototype.glowStringColor = function () {
         g = this.green,
         b = this.blue;
 
-     //determine what color we are
-     //increase it by 20%
+    // determine what color we are
+    // increase it by 20%
     if (r >= g && r >= b) {
         r *= mult;
         if (r > 255)
@@ -324,7 +280,7 @@ HarpString.prototype.glowStringColor = function () {
 };
 
 
-HarpString.prototype.render = function(ctx, stringNum) {
+HarpString.prototype.render = function(stringNum) {
     // determine color of glow
     this.shadowColor = this.glowStringColor();
 
@@ -336,7 +292,7 @@ HarpString.prototype.render = function(ctx, stringNum) {
     ctx.shadowBlur  = this.shadowBlur;
 
     // render strings
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 15 - (0.65 * stringNum);
     ctx.beginPath();
 
     // start point
@@ -383,7 +339,7 @@ HarpString.prototype.shadowBlurVal = function() {
 
 
 
-function Pointer(x, y, z, radius, start, end, dir, opacity, fill) {
+function Circle(x, y, z, radius, start, end, dir, fill) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -391,21 +347,66 @@ function Pointer(x, y, z, radius, start, end, dir, opacity, fill) {
     this.start = start;
     this.end = end;
     this.direction = dir;
-    this.opacity = opacity;
     this.fill = fill;
 
     return this;
 }
 
 
+Circle.prototype.render = function() {
+    ctx.globalCompositeOperation = "lighter";
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.fillStyle = this.fill;
+    ctx.arc(this.x, this.y, this.radius, this.start, this.end, false);
+    ctx.fill();
+    ctx.closePath();
+};
 
 
-function Input(amount, canvasID) {
+
+
+function Pointer(x, y, z, radius, start, end, dir, fill) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.radius = radius;
+    this.start = start;
+    this.end = end;
+    this.direction = dir;
+    this.fill = fill;
+
+    this.trailNum = 2;
+    this.trails = [];
+    this.createTrail();
+
+    return this;
+}
+
+
+Pointer.prototype.createTrail = function() {
+    for (var i = 0; i < this.trailNum; i++) {
+        // var r = Math.floor(Math.random() * 255),
+        //     g = Math.floor(Math.random() * 255),
+        //     b = Math.floor(Math.random() * 255),
+        //     color = "rgb(" + r + "," + g + "," + b + ")";
+
+        var color = "rgba(255,255,255,0.1)";
+
+        var c = new Circle(this.x, this.y, HAND_Z_MIN, this.radius, this.start, this.end, this.direction, color);
+        this.trails.push(c);
+
+        // console.log("Pointer x: " + this.x + " Added trail #" + i +  " with colors: " + color);
+    }
+};
+
+
+
+
+function Input(amount) {
     this.hands = [];
     this.handsNum = amount;
-
-    this.canvas = document.getElementById(canvasID);
-    this.ctx = this.canvas.getContext('2d');
+    this.doRenderHands = true;
 
     this.create();
 
@@ -414,17 +415,21 @@ function Input(amount, canvasID) {
 
 
 Input.prototype.create = function() {
-    for (var i = 0; i < this.handsNum; i++) {
-        var x = this.canvas.width/2,
-            y = this.canvas.height/2;
+    var x = canvas.width/2 - 82,
+        y = canvas.height/2;
 
-        var hand = new Pointer(x, y, HAND_Z_MAX, 25, 25, 0, 2 * Math.PI, 0, "rgb(0,0,0)");
-        this.hands.push(hand);
-    }
+    var hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
+    this.hands.push(hand);
+
+    x = canvas.width/2 + 74;
+    y = canvas.height/2;
+
+    hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
+    this.hands.push(hand);
 };
 
 
-Input.prototype.getPos = function (canvas, normalizedPosition, id) {
+Input.prototype.getPos = function (normalizedPosition, id) {
     var pos = [];
 
     this.hands[id].x = canvas.width * normalizedPosition[0];
@@ -435,60 +440,96 @@ Input.prototype.getPos = function (canvas, normalizedPosition, id) {
     pos.push(this.hands[id].y);
     pos.push(this.hands[id].z);
 
-    return pos;
+    return { x: this.hands[id].x,
+             y: this.hands[id].y,
+             z: this.hands[id].z };
+};
+
+
+Input.prototype.draw = function(h, handZ) {
+    h.displayOpacity = 2.75 - 0.0025 * handZ;
+    if (h.displayOpacity < 0.5)
+        h.displayOpacity = 0.5;
+
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+    ctx.fillStyle = "rgba(200, 100, 100, " + h.displayOpacity + ")";
+    ctx.fill();
+    ctx.stroke();
+
+    // make circle blue if we are in the "touch area"
+    if (h.displayOpacity >= 1) {
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.fillStyle = "rgba(0, 100, 255, 1)";
+        ctx.fill();
+        ctx.stroke();
+    }
+};
+
+
+Input.prototype.drawTrail = function(hand, handX, handY) {
+    // grab trail array of this pointer (hand)
+    var t = hand.trails;
+
+    for (var i = 0; i < t.length; i++) {
+        var t1 = t[i],
+            t2 = t[i-1];
+
+        t[t.length - 1].render();
+
+        t[t.length - 1].x = handX;
+        t[t.length - 1].y = handY;
+        t1.render();
+
+        if(i > 0) {
+            t2.x += (t1.x - t2.x) * 0.6;
+            t2.y += (t1.y - t2.y) * 0.6;
+        }
+    }
+
+    // console.log("handX: " + handX + " trailendX: " + t[t.length - 1].x);
 };
 
 
 Input.prototype.render = function(id, handX, handY, handZ) {
-    var h = this.hands[id],
-        ctx = this.ctx;
+    var h = this.hands[id];
 
     // create circle and position it
     ctx.beginPath();
     ctx.arc(handX, handY, h.radius, h.start, h.end, h.direction);
 
     // set opacity according to Z value and
-    // don't show pointer on load, before registering a hand
+    // don't render hand pointers out of range
     if (handZ < HAND_Z_MAX) {
-        h.displayOpacity = 1.72 - 0.0018 * handZ;
-
-        ctx.shadowBlur = 0;
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillStyle = "rgba(200, 100, 100, " + h.displayOpacity + ")";
-        ctx.fill();
-        ctx.stroke();
-
-        // make circle green if we are in the "touch area"
-        if (h.displayOpacity >= 1) {
-            ctx.strokeStyle = "rgba(0,0,0,0)";
-            ctx.fillStyle = "rgba(255, 255, 255, 1)";
-            ctx.fill();
-            ctx.stroke();
-        }
+        this.draw(h, handZ);
     }
+
+    ctx.closePath();
+
+    // render and draw trail
+    this.drawTrail(h, handX, handY);
 };
 
 
 
 
-function StringInstrument(stageID, canvasID, stringNum, handsNum) {
+function StringInstrument(stageID, stringNum, handsNum) {
     this.strings = [];
-    this.stage = new Stage(stageID);
     this.stringNum = stringNum;
+    this.stage = new Stage(stageID);
 
-    this.canvas = document.getElementById(canvasID);
-    this.ctx = this.canvas.getContext('2d');
-
-    this.doRenderHands = false;
     this.handsNum = handsNum;
-    this.input = new Input(this.handsNum, canvasID);
+    this.input = new Input(this.handsNum);
 
     this.clr = new Leap.Controller();
     this.clr.connect();
 
     this.create();
-    this.renderLM(canvasID);
+
+    // these will both continue to loop
+    this.renderLeapMotion();
     this.render();
 
     return this;
@@ -497,7 +538,7 @@ function StringInstrument(stageID, canvasID, stringNum, handsNum) {
 
 StringInstrument.prototype.create = function() {
     for (var i = 0; i < this.stringNum; i++) {
-        var srect = new Rect(50 + i * 78, 0, 10, 700);
+        var srect = new Rect(50 + i * 78, 0, 10, 800);
         var s     = new HarpString(srect, i);
 
         this.stage.addString(srect, s);
@@ -508,18 +549,19 @@ StringInstrument.prototype.create = function() {
 
 // MOVE TO STAGE?
 // NOTHING TO DO WITH THE STRINGS
-StringInstrument.prototype.renderLM = function(canvasID) {
-    var that = this,
-        canvasElement = document.getElementById(canvasID);
+StringInstrument.prototype.renderLeapMotion = function() {
+    var that = this;
 
     this.clr.on("frame", function (frame) {
         if (frame.pointables.length > 0) {
-            that.doRenderHands = true;
+            that.input.doRenderHands = true;
 
             //Get a pointable (hand) and normalize the index finger's dip position
-            for (var i = 0, len = frame.hands.length; i < len; i++) {
+            for (var i = 0, len = frame.hands.length; i < len; i++)
+            {
                 // hand limit
-                if (i+1 > that.handsNum)
+                var amount = i + 1;
+                if (amount > that.handsNum)
                     return;
 
                 var hand = frame.hands[i],
@@ -527,25 +569,23 @@ StringInstrument.prototype.renderLM = function(canvasID) {
                     normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
                 // Convert the normalized coordinates to span the canvas
-                var handPos = that.input.getPos(canvasElement, normalizedPosition, i);
+                var handPos = that.input.getPos(normalizedPosition, i);
 
                 // loop through all objects
-                for (var j = 0, len2 = frame.hands.length; j < len2; j++) {
+                for (var j = 0, len2 = frame.hands.length; j < len2; j++)
+                {
+                    // only check string collision inside canvas and in Z-range
+                    var isInRange = handPos.x > 0
+                     && handPos.y < canvas.width
+                     && handPos.z < HAND_Z_MIN;
 
-                    // only check string collision inside canvas and visible Z range
-                    if (handPos[0] > 0 &&
-                        handPos[1] < canvasElement.width &&
-                        handPos[2] < HAND_Z_MID)
-                    {
-                        // only check collision if hand is in correct Z range
-                        if (handPos[2] < HAND_Z_MIN) {
-                            that.stage.LMMoved(handPos[0], handPos[1]);
-                        }
+                    if (isInRange) {
+                        that.stage.LeapMotionMoved(handPos.x, handPos.y);
                     }
                 }
             }
         } else {
-            that.doRenderHands = false;
+            that.input.doRenderHands = false;
         }
     });
 };
@@ -563,19 +603,19 @@ StringInstrument.prototype.render = function() {
     this.stage.timer();
 
     // clear screen
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render strings
     for (var i = 0; i < this.stringNum; i++) {
-        this.strings[i].render(this.ctx, i);
+        this.strings[i].render(i);
     }
 
     // render hands
-    if (this.doRenderHands) {
+    if (this.input.doRenderHands) {
         for (i = 0; i < this.handsNum; i++) {
             this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
         }
     }
 };
 
-var harp = new StringInstrument("stage", "strings", 16, 2);
+var harp = new StringInstrument("stage", 16, 2);
