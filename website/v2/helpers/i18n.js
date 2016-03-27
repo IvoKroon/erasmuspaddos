@@ -15,15 +15,15 @@ module.exports = function middleware(req, res, next) {
   // Check if url container lang query string and save that in a session
   if(query.lang) req.session.lang = query.lang.toLowerCase();
 
-  // check if session exists overwrite defautlang
+  // check if session exists if true overwrite defaultLang value
   if(req.session.lang) defaultLang = req.session.lang;
 
   // get path of language
   var langPath = path.resolve(__dirname, '../lang/' + defaultLang + '.json');
 
-  // Check is file exists in directory
+  // Check if file exists in directory
   fs.access(langPath, function(err, _) {
-    // if file does'nt exists render pass deafult language path
+    // if file does'nt exists pass default language path
     if(err) return initializeI18n(req, defaultLangPath, next);
     // pass language path to next function
     initializeI18n(req, langPath, next);
@@ -39,7 +39,7 @@ module.exports = function middleware(req, res, next) {
  */
 function initializeI18n(req, path, next) {
   // get fle content
-  fs.readFile(path, 'utf8', function (err,lang) {
+  fs.readFile(path, 'utf8', function (err, lang) {
     if (err) { console.log(err); return next(); }
     // bind i18n func to request
     req.i18n = i18n(lang);
@@ -55,14 +55,19 @@ function initializeI18n(req, path, next) {
  * @api private
  */
 function i18n(lang) {
-  // parse json
-  var languageData = JSON.parse(lang);
-  // return function
-  return function(src, prop) {
-    // check if property exists in json
-    if(!languageData[src]) throw new Error('Property: ' + src + ' does not exists in json');
-    if(!languageData[src][prop]) throw new Error('Property: ' + prop + ' does not exists in ' + src);
-    // return property value
-    return languageData[src][prop];
+  try {
+    // parse json
+    var languageData = JSON.parse(lang);
+    // return function
+    return function(src, prop) {
+      // check if property exists in json
+      if(!languageData[src]) throw new Error('Property: ' + src + ' does not exists in json');
+      if(!languageData[src][prop]) throw new Error('Property: ' + prop + ' does not exists in ' + src);
+      // return property value
+      return languageData[src][prop];
+    }
+  }catch(e) {
+    throw new Erro('Cant parse json check i18n helper function : %s', e);
   }
+
 }

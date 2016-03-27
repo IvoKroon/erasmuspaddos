@@ -1,7 +1,8 @@
 {
   "home": {
     "head:title": "Paddos - Thuis",
-    "title": "Speel de brug"
+    "title": "Speel de brug",
+    "error:code": "Oops, ongeldige code ingevoerd"
   },
 
   "info": {

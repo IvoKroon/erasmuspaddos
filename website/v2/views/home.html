@@ -12,10 +12,10 @@
         </div>
 
         <div id="code">
-            <form action="/website" method="GET">
+            <form action="/" method="GET">
                 <label for="input1" class="error" id="codeError">
                     <% if(notFound){ %>
-                        <div>Sound was'nt found in our database.</div>
+                        <div><%= i18n('home', 'error:code') %></div>
                     <% } %>
                 </label>
                 <input id="input1" type="text" name="code">

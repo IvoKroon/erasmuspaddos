@@ -1,4 +1,5 @@
 // require modules
+require('./helpers/assign-polyfill');
 var express = require('express');
 var path = require('path');
 var app = express();
@@ -6,13 +7,12 @@ var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var i18n = require('./helpers/i18n');
 var session = require('express-session');
-
+var renderWrap = require('./helpers/renderWrap');
 // set variables
 var PORT = process.env.PORT || 3001;
 
 // require database connection
 require('./db-connection');
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./public'));
@@ -24,14 +24,15 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(i18n);
+app.use(renderWrap);
 
 
 //////// ROUTES ////////////
-app.get('/', i18n, function(req, res) {
+app.get('/', function(req, res) {
   var code = req.query.code;
-  var i18n = req.i18n;
   if(!code) {
-    return res.render('home', {sound:null, notFound: null, i18n:i18n});
+    return res.render('home', {sound:null, notFound: null});
   }
   var sql = 'SELECT * FROM sounds WHERE id=' + dbConnection.escape(code) + '';
   dbConnection.query(sql, function(err, result) {
@@ -39,24 +40,21 @@ app.get('/', i18n, function(req, res) {
 
     res.render('home', {
       sound: result.length > 0 ? result[0] : null,
-      notFound: result.length < 1 ? 1 : 0,
-      i18n:i18n
+      notFound: result.length < 1 ? 1 : 0
     });
   });
 });
 
-app.get('/info', i18n, function(req, res) {
-  res.render('info', { i18n: req.i18n });
+app.get('/info', function(req, res) {
+  res.render('info');
 });
 
 app.get('/sounds', i18n, function(req, res) {
   var sql = 'SELECT * FROM sounds ';
   dbConnection.query(sql, function(err, result) {
     if(err) return console.log(err);
-    console.log(result);
     res.render('sounds', {
-      sounds: result,
-      i18n: req.i18n
+      sounds: result
     });
   });
 });

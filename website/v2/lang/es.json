@@ -1,7 +1,8 @@
 {
   "home": {
     "head:title": "Paddos - Casa",
-    "title": "Play the bridge"
+    "title": "Play the bridge",
+    "error:code": "Vaya, código inválido por favor, inténtelo de nuevo"
   },
 
   "info": {
