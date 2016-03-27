@@ -4,10 +4,11 @@
 
 // globals
 var HAND_Z_MIN = 700,
-    HAND_Z_MAX = 1800,
-    POINTER_TRAIL_MAX = 10;
+    POINTER_TRAIL_MAX = 10,
+    HANDS_NUM_MAX = 2,
+    STRINGS_NUM_MAX = 16;
 
-var canvas = document.getElementById("strings"),
+var canvas = document.getElementById('strings'),
     ctx = canvas.getContext('2d');
 
 window.requestAnimFrame = (function() {
@@ -30,7 +31,6 @@ function Stage(id, input) {
     this.listeners();
     this.hitZones = [];
     this.prevTime = Date.now();
-    this.mouse = { x: 0, y: 0 };
     this.input = input;
 
     return this;
@@ -84,14 +84,14 @@ Stage.prototype.listeners = function() {
             y = e.clientY - that.positionLeft;
 
         that.hitZones.forEach(function(zone) {
-            that.checkPointM(x, y, zone);
+            that.checkPoint(0, x, y, zone);
         });
 
         that.dragging = true;
         that.prev = [x, y];
 
-        that.mouse.x = x;
-        that.mouse.y = y;
+        that.input[0].x = x;
+        that.input[0].y = y;
     }, false);
 };
 
@@ -119,21 +119,6 @@ Stage.prototype.addString = function(rect, string) {
 };
 
 
-Stage.prototype.givePointerColorOfStringM = function(string) {
-    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
-        var r = string.red,
-            g = string.green,
-            b = string.blue,
-            a = 0.4;
-
-        if (i == POINTER_TRAIL_MAX - 1)
-            a = 1.0;
-
-        this.input[1].pointer[i].fill = "rgba(" + r + "," + g + "," + b + "," + a + ")";
-    }
-};
-
-
 Stage.prototype.givePointerColorOfString = function(id, string) {
     for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
         var r = string.red,
@@ -144,15 +129,7 @@ Stage.prototype.givePointerColorOfString = function(id, string) {
         if (i == POINTER_TRAIL_MAX - 1)
             a = 1.0;
 
-        this.input[id].pointer[i].fill = "rgba(" + r + "," + g + "," + b + "," + a + ")";
-    }
-};
-
-
-Stage.prototype.checkPointM = function(x, y, zone) {
-    if (zone.inside(x, y)) {
-        zone.string.strum();
-        this.givePointerColorOfStringM(zone.string);
+        this.input[id].pointers[i].fill = "rgba(" + r + "," + g + "," + b + "," + a + ")";
     }
 };
 
@@ -266,7 +243,7 @@ HarpString.prototype.strum = function() {
 
 HarpString.prototype.sendDataToArduino = function() {
     var val = this.id + '';
-    // iosocket.emit('stringtouched', val);
+    iosocket.emit('stringtouched', val);
 };
 
 
@@ -435,48 +412,44 @@ Pointer.prototype.render = function() {
     if (this.tick > Number.MAX_VALUE)
         this.tick = 0;
 
-    this.draw();
-
     // create circle and position it
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, this.start, this.end, this.direction);
     ctx.closePath();
+    this.draw();
 };
 
 
 
 
-function Input(trailNum) {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
+function Input(x, y) {
+    this.x = x;
+    this.y = y;
+    this.z = HAND_Z_MIN;
 
-    this.trailNum = trailNum;
-    this.pointer = this.create();
-    this.doRenderHands = false;
+    // create pointer + trail
+    this.pointers = this.create();
 
     return this;
 }
 
 
 Input.prototype.create = function() {
-    var x = canvas.width/2,
-        y = canvas.height/2;
     var a = [];
     var fill, stroke, lineWidth;
 
-    for (var i = 0; i < this.trailNum; i++) {
-        if (i == this.trailNum - 1) {
+    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
+        fill = "rgba(255,255,255,0.4)";
+        stroke = "rgba(0,0,0,0)";
+        lineWidth = 0;
+
+        if (i == POINTER_TRAIL_MAX - 1) {
             fill = "rgba(0,100,255,1)";
             stroke = "rgba(255,255,255,1)";
             lineWidth = 10;
-        } else {
-            fill = "rgba(255,255,255,0.4)";
-            stroke = "rgba(0,0,0,0)";
-            lineWidth = 0;
         }
 
-        var h = new Pointer(i, x, y, HAND_Z_MIN, 25, 0, 2 * Math.PI, fill, stroke, lineWidth);
+        var h = new Pointer(i, this.x, this.y, HAND_Z_MIN, 25, 0, 2 * Math.PI, fill, stroke, lineWidth);
         a.push(h);
     }
 
@@ -484,33 +457,30 @@ Input.prototype.create = function() {
 };
 
 
-Input.prototype.render = function(handX, handY) {
-    var p = this.pointer;
+Input.prototype.render = function() {
+    var p = this.pointers;
 
-    for (var i = 0; i < p.length; i++) {
+    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
         var p1 = p[i],
             p2 = p[i - 1];
 
-        p[p.length - 1].x = handX;
-        p[p.length - 1].y = handY;
+        p[p.length - 1].x = this.x;
+        p[p.length - 1].y = this.y;
 
         if (i > 0) {
             p2.x += (p1.x - p2.x) * 0.6;
             p2.y += (p1.y - p2.y) * 0.6;
         }
 
-        p1.render(i, this.trailNum);
+        p1.render(i);
     }
 };
 
 
 
 
-function StringInstrument(stageID, stringNum, handsNum, trailNum) {
+function StringInstrument(stageID) {
     this.strings = [];
-    this.stringNum = stringNum;
-    this.trailNum = trailNum;
-    this.handsNum = handsNum;
 
     this.input = [];
     this.createInput();
@@ -531,7 +501,7 @@ function StringInstrument(stageID, stringNum, handsNum, trailNum) {
 
 
 StringInstrument.prototype.create = function() {
-    for (var i = 0; i < this.stringNum; i++) {
+    for (var i = 0; i < STRINGS_NUM_MAX; i++) {
         var srect = new Rect(50 + i * 78, 0, 10, 800);
         var s     = new HarpString(srect, i);
 
@@ -542,8 +512,10 @@ StringInstrument.prototype.create = function() {
 
 
 StringInstrument.prototype.createInput = function() {
-    for (var i = 0; i < this.handsNum; i++) {
-        this.input.push(new Input(this.trailNum));
+    for (var i = 0; i < HANDS_NUM_MAX; i++) {
+        var x = -50 + canvas.width/2 + i * 100;
+        var y = canvas.height/2;
+        this.input.push(new Input(x, y));
     }
 };
 
@@ -554,11 +526,9 @@ StringInstrument.prototype.renderLeapMotion = function() {
         if (frame.pointables.length > 0) {
             for (var i = 0, len = frame.hands.length; i < len; i++)
             {
-                that.input[i].doRenderHands = true;
-
                 // hand limit
                 var curHands = i + 1;
-                if (curHands > that.handsNum)
+                if (curHands > HANDS_NUM_MAX)
                     return;
 
                 //Get a pointable (hand) and normalize the index finger's dip position
@@ -567,7 +537,7 @@ StringInstrument.prototype.renderLeapMotion = function() {
                     normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
                 // Convert the normalized coordinates to span the canvas
-                var handPos = that.input[i].pointer[POINTER_TRAIL_MAX - 1].getPos(normalizedPosition);
+                var handPos = that.input[i].pointers[POINTER_TRAIL_MAX - 1].getPos(normalizedPosition);
 
                 // store main pointer's info in its input object
                 this.input[i].x = handPos.x;
@@ -584,13 +554,9 @@ StringInstrument.prototype.renderLeapMotion = function() {
 
                     // TODO: i of j?
                     if (isInRange) {
-                        that.stage.LeapMotionMoved(i, handPos.x, handPos.y);
+                        that.stage.LeapMotionMoved(j, handPos.x, handPos.y);
                     }
                 }
-            }
-        } else {
-            for (i = 0; i < this.handsNum; i++) {
-                that.input[i].doRenderHands = false;
             }
         }
     });
@@ -612,22 +578,18 @@ StringInstrument.prototype.render = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render strings
-    for (var i = 0; i < this.stringNum; i++) {
+    for (var i = 0; i < STRINGS_NUM_MAX; i++) {
         this.strings[i].render(i);
     }
 
-    // won't work with Leap Motion
-    for (i = 0; i < this.input.length; i++) {
-        this.input[i].render(this.stage.mouse.x, this.stage.mouse.y);
-    }
+    // render pointers
+    for (i = 0; i < HANDS_NUM_MAX; i++) {
+        // mouse only
+        // this.input[i].render(this.stage.mouse.x, this.stage.mouse.y);
 
-    // leap motion
-    // TODO: what x, y, z?
-    for (i = 0; i < this.handsNum; i++) {
-        if (this.input[i].doRenderHands) {
-            this.input[i].render(this.input[i].x, this.input[i].y, this.input[i].z);
-        }
+        // leap motion
+        this.input[i].render();
     }
 };
 
-var harp = new StringInstrument("stage", 16, 2, POINTER_TRAIL_MAX);
+var harp = new StringInstrument("stage");
