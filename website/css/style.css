@@ -382,10 +382,26 @@ a:hover{
 /*info pagina*/
 
 .info_text{
-    text-align: center;
-    margin-top: 5%;
-    line-height: 50px;
-    font-size: 20px;
-    background: rgba(5, 2, 2, 0.46);
+    position: absolute;
+    margin-top: 10%;
+    width: 50%;
+    text-align: left;
+    background: rgba(8, 30, 67, 0.58);
+    left: 4%;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
+
+#text2{
+    position: absolute;
+    top: 28%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+    margin-button: 5%;
+}
+
 /*einde info pagina*/
