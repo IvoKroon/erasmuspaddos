@@ -13,18 +13,19 @@ body {
     background-size: cover;
     color: white;
 }
-
-h1 {
+h1, .tlt span {
     color: white;
     font-size: 80px;
     text-shadow: 4px 4px #030000;
     letter-spacing: 0.25em;
 }
 
+.tlt { overflow: auto; padding: 2rem 0; height: 10rem; }
 
 .error {
-    color:white;
+    color:red;
     font-size: 18px;
+    display: none;
 }
 
 /*info pagina*/
@@ -281,13 +282,7 @@ li {
     list-style: none;
 }
 
-span {
-    cursor: pointer;
-    display: inline-block;
-    padding: 0px 0px 4px;
-    margin: 0px 10px 0px;
-    position: relative;
-}
+
 
 span:before {
     content: '';
@@ -382,11 +377,30 @@ a:hover{
 /*info pagina*/
 
 .info_text{
-    text-align: center;
-    margin-top: 5%;
-    line-height: 50px;
-    font-size: 20px;
-    background: rgba(5, 2, 2, 0.46);
+    position: absolute;
+    margin-top: 10%;
+    width: 50%;
+    text-align: left;
+    background: rgba(8, 30, 67, 0.58);
+    left: 4%;
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
+
+#text2{
+    position: absolute;
+    top: 28%;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+    margin-button: 5%;
+}
+
 /*einde info pagina*/
+
+
+
 
