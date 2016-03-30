@@ -32,6 +32,7 @@ function Stage(id, input) {
     this.prevTime = Date.now();
     this.timeDone = false;
     this.input = input;
+    this.loadTime = Date.now();
 
     return this;
 }
@@ -81,7 +82,7 @@ Stage.prototype.listeners = function() {
 
     // START TIMER + RECORDING
     window.onload = function() {
-        alert("Go!");
+        // alert("Go!");
     };
 
     // this.el.addEventListener('mousemove', function(e) {
@@ -157,6 +158,9 @@ Stage.prototype.LeapMotionMoved = function(id, handX, handY) {
 
 
 Stage.prototype.timer = function() {
+    if (Date.now() - this.loadTime < 3000)
+        return;
+    
     var curTime = Date.now();
 
     if (curTime - this.prevTime > 1000) {
@@ -603,5 +607,22 @@ StringInstrument.prototype.render = function() {
         this.input[i].render();
     }
 };
+
+
+var prevTime = Date.now(),
+    tick = 0,
+    time = 3;
+
+
+window.requestAnimFrame = (function() {
+    return  window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
 
 var harp = new StringInstrument("stage");
