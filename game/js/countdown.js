@@ -25,6 +25,7 @@ function draw() {
 
     ctx.font = size + "px Arial";
     ctx.fillStyle = "white";
+    ctx.textAlign = "center";
     ctx.fillText(time, canvas.width/2, canvas.height/2);
 }
 
