@@ -224,6 +224,17 @@ Stage.prototype.timer = function() {
 };
 
 
+Stage.prototype.clearScreen = function() {
+    var t = document.getElementsByClassName('timer');
+
+    for (var i = 0; i < t.length; i++) {
+        t[i].style.display = "none";
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
+
+
 
 
 function Rect(x, y, width, height) {
@@ -580,11 +591,9 @@ StringInstrument.prototype.renderLeapMotion = function() {
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++)
                 {
                     // only check string collision inside canvas
-                    var isInRange = handPos.x > 0 &&
-                        handPos.y < canvas.width;
+                    var isInRange = handPos.x > 0 && handPos.y < canvas.width;
 
-                    // TODO: i of j?
-                    if (isInRange) {
+                    if (isInRange && that.stage.timeStarted) {
                         that.stage.LeapMotionMoved(i, handPos.x, handPos.y);
                     }
                 }
@@ -593,10 +602,12 @@ StringInstrument.prototype.renderLeapMotion = function() {
     });
 };
 
-
 StringInstrument.prototype.render = function() {
-    // if (this.stage.timeDone)
-    //     return;
+    if (this.stage.timeDone) {
+        // clear screen
+        this.stage.clearScreen();
+        return;
+    }
 
     var that = this;
 
@@ -618,10 +629,6 @@ StringInstrument.prototype.render = function() {
 
     // render pointers
     for (i = 0; i < HANDS_NUM_MAX; i++) {
-        // mouse only
-        // this.input[i].render(this.stage.mouse.x, this.stage.mouse.y);
-
-        // leap motion
         this.input[i].render();
     }
 };
