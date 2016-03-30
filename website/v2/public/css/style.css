@@ -4,7 +4,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 0;
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.8em;
     background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -20,6 +20,7 @@ h1 {
     text-shadow: 4px 4px #030000;
     letter-spacing: 0.25em;
 }
+
 
 .error {
     color:white;
@@ -388,3 +389,4 @@ a:hover{
     background: rgba(5, 2, 2, 0.46);
 }
 /*einde info pagina*/
+

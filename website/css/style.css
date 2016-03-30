@@ -4,7 +4,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 0;
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     line-height: 1.8em;
     background: url('../image/erasmusBel.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -13,13 +13,14 @@ body {
     background-size: cover;
     color: white;
 }
-
-h1 {
+h1, .tlt span {
     color: white;
     font-size: 80px;
     text-shadow: 4px 4px #030000;
     letter-spacing: 0.25em;
 }
+
+.tlt { overflow: auto; padding: 2rem 0; height: 10rem; }
 
 .error {
     color:red;
@@ -281,13 +282,7 @@ li {
     list-style: none;
 }
 
-span {
-    cursor: pointer;
-    display: inline-block;
-    padding: 0px 0px 4px;
-    margin: 0px 10px 0px;
-    position: relative;
-}
+
 
 span:before {
     content: '';
@@ -405,3 +400,7 @@ a:hover{
 }
 
 /*einde info pagina*/
+
+
+
+
