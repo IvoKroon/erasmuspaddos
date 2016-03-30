@@ -3,8 +3,7 @@
  */
 
 // globals
-var HAND_Z_MIN = 700,
-    POINTER_TRAIL_MAX = 10,
+var POINTER_TRAIL_MAX = 10,
     HANDS_NUM_MAX = 2,
     STRINGS_NUM_MAX = 16;
 
@@ -79,20 +78,20 @@ Stage.prototype.listeners = function() {
         that.position();
     }, false);
 
-    this.el.addEventListener('mousemove', function(e) {
-        var x = e.clientX - that.positionTop,
-            y = e.clientY - that.positionLeft;
-
-        that.hitZones.forEach(function(zone) {
-            that.checkPoint(0, x, y, zone);
-        });
-
-        that.dragging = true;
-        that.prev = [x, y];
-
-        that.input[0].x = x;
-        that.input[0].y = y;
-    }, false);
+    // this.el.addEventListener('mousemove', function(e) {
+    //     var x = e.clientX - that.positionTop,
+    //         y = e.clientY - that.positionLeft;
+    //
+    //     that.hitZones.forEach(function(zone) {
+    //         that.checkPoint(0, x, y, zone);
+    //     });
+    //
+    //     that.dragging = true;
+    //     that.prev = [x, y];
+    //
+    //     that.input[0].x = x;
+    //     that.input[0].y = y;
+    // }, false);
 };
 
 
@@ -335,6 +334,7 @@ HarpString.prototype.render = function(stringNum) {
         this.y + this.height
     );
     ctx.stroke();
+    ctx.closePath();
 
     this._strumForce *= 0.985;
     this.a += 0.8;
@@ -363,11 +363,10 @@ HarpString.prototype.shadowBlurVal = function() {
 
 
 
-function Pointer(id, x, y, z, start, end, dir, fill, stroke, lwidth) {
+function Pointer(id, x, y, start, end, dir, fill, stroke, lwidth) {
     this.id = id;
     this.x = x;
     this.y = y;
-    this.z = z;
     this.baseRadius = { min: 15, max: 18 };
     this.radius = this.baseRadius.min;
     this.start = start;
@@ -385,11 +384,9 @@ function Pointer(id, x, y, z, start, end, dir, fill, stroke, lwidth) {
 Pointer.prototype.getPos = function (normalizedPosition) {
     this.x = canvas.width * normalizedPosition[0];
     this.y = canvas.height * (1 - normalizedPosition[1]);
-    this.z = (canvas.width + canvas.height) * normalizedPosition[2];
 
     return { x: this.x,
-             y: this.y,
-             z: this.z };
+        y: this.y };
 };
 
 
@@ -425,7 +422,6 @@ Pointer.prototype.render = function() {
 function Input(x, y) {
     this.x = x;
     this.y = y;
-    this.z = HAND_Z_MIN;
 
     // create pointer + trail
     this.pointers = this.create();
@@ -449,7 +445,7 @@ Input.prototype.create = function() {
             lineWidth = 10;
         }
 
-        var h = new Pointer(i, this.x, this.y, HAND_Z_MIN, 25, 0, 2 * Math.PI, fill, stroke, lineWidth);
+        var h = new Pointer(i, this.x, this.y, 25, 0, 2 * Math.PI, fill, stroke, lineWidth);
         a.push(h);
     }
 
@@ -515,7 +511,8 @@ StringInstrument.prototype.createInput = function() {
     for (var i = 0; i < HANDS_NUM_MAX; i++) {
         var x = -50 + canvas.width/2 + i * 100;
         var y = canvas.height/2;
-        this.input.push(new Input(x, y));
+        var inp = new Input(x, y);
+        this.input.push(inp);
     }
 };
 
@@ -540,21 +537,19 @@ StringInstrument.prototype.renderLeapMotion = function() {
                 var handPos = that.input[i].pointers[POINTER_TRAIL_MAX - 1].getPos(normalizedPosition);
 
                 // store main pointer's info in its input object
-                this.input[i].x = handPos.x;
-                this.input[i].y = handPos.y;
-                this.input[i].z = handPos.z;
+                that.input[i].x = handPos.x;
+                that.input[i].y = handPos.y;
 
                 // loop through all objects
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++)
                 {
-                    // only check string collision inside canvas and in Z-range
+                    // only check string collision inside canvas
                     var isInRange = handPos.x > 0 &&
-                        handPos.y < canvas.width &&
-                        handPos.z < HAND_Z_MIN;
+                        handPos.y < canvas.width;
 
                     // TODO: i of j?
                     if (isInRange) {
-                        that.stage.LeapMotionMoved(j, handPos.x, handPos.y);
+                        that.stage.LeapMotionMoved(i, handPos.x, handPos.y);
                     }
                 }
             }

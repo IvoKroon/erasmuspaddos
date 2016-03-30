@@ -10,7 +10,7 @@ var values = [];
 
 // serial port
 var serialPort;
-var portName = '/dev/cu.usbmodem1411';
+var portName = '/dev/cu.usbmodem1421';
 
 // Listen to serial port
 serialPort = new SerialPort(portName, {
