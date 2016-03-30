@@ -1,6 +1,22 @@
 var canvas = document.getElementById('strings'),
     ctx = canvas.getContext('2d');
 
+var prevTime = Date.now(),
+    tick = 0,
+    time = 3;
+
+
+window.requestAnimFrame = (function() {
+    return  window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
 function draw() {
     if (isNaN(time))
         return;
@@ -20,8 +36,8 @@ function draw() {
         prevTime = Date.now();
     }
 
-    tick += 1.5;
-    var size = 180 - tick;
+    tick += 3;
+    var size = 280 - tick;
 
     ctx.font = size + "px Arial";
     ctx.fillStyle = "white";

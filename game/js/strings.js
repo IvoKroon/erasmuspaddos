@@ -30,6 +30,7 @@ function Stage(id, input) {
     this.listeners();
     this.hitZones = [];
     this.prevTime = Date.now();
+    this.timeStarted = false;
     this.timeDone = false;
     this.input = input;
     this.loadTime = Date.now();
@@ -157,10 +158,32 @@ Stage.prototype.LeapMotionMoved = function(id, handX, handY) {
 };
 
 
+Stage.prototype.startTimer = function() {
+    var t = document.getElementsByClassName('timer');
+
+    for (var i = 0; i < t.length; i++) {
+        t[i].style.display = "block";
+    }
+
+    this.timeStarted = true;
+};
+
+
+Stage.prototype.timerDone = function() {
+    if (!this.timeDone) {
+        alert("time is up");
+        this.timeDone = true;
+    }
+};
+
+
 Stage.prototype.timer = function() {
     if (Date.now() - this.loadTime < 3000)
         return;
-    
+
+    if (!this.timeStarted)
+        this.startTimer();
+
     var curTime = Date.now();
 
     if (curTime - this.prevTime > 1000) {
@@ -197,14 +220,6 @@ Stage.prototype.timer = function() {
         sec2.innerHTML = ss + "";
 
         this.prevTime = curTime;
-    }
-};
-
-
-Stage.prototype.timerDone = function() {
-    if (!this.timeDone) {
-        alert("time is up");
-        this.timeDone = true;
     }
 };
 
@@ -580,6 +595,9 @@ StringInstrument.prototype.renderLeapMotion = function() {
 
 
 StringInstrument.prototype.render = function() {
+    // if (this.stage.timeDone)
+    //     return;
+
     var that = this;
 
     // loop
@@ -607,22 +625,5 @@ StringInstrument.prototype.render = function() {
         this.input[i].render();
     }
 };
-
-
-var prevTime = Date.now(),
-    tick = 0,
-    time = 3;
-
-
-window.requestAnimFrame = (function() {
-    return  window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function(callback) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-})();
 
 var harp = new StringInstrument("stage");
