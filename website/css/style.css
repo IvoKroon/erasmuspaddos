@@ -13,6 +13,7 @@ body {
     background-size: cover;
     color: white;
 }
+
 h1, .tlt span {
     color: white;
     font-size: 80px;
@@ -20,10 +21,14 @@ h1, .tlt span {
     letter-spacing: 0.25em;
 }
 
-.tlt { overflow: auto; padding: 2rem 0; height: 10rem; }
+.tlt {
+    overflow: hidden;
+    padding: 2rem 0;
+    height: 10rem;
+}
 
 .error {
-    color:red;
+    color: red;
     font-size: 18px;
     display: none;
 }
@@ -84,6 +89,10 @@ img {
     margin-bottom: -12px;
 }
 
+#code {
+    margin-left: 110px;
+}
+
 /*einde home pagina*/
 
 @media only screen and (max-width: 1024px) {
@@ -105,8 +114,26 @@ img {
         font-size: 50px;
     }
 
+    h1, .tlt span {
+        color: white;
+        font-size: 60px;
+        text-shadow: 4px 4px #030000;
+        letter-spacing: 0.25em;
+    }
+
+    .tlt {
+        overflow: hidden;
+        padding: 2rem 0;
+        height: 10rem;
+    }
+
     #wrapper {
         top: 35%;
+        margin-left: -60px !important;
+    }
+
+    #code {
+        margin-left: 110px;
     }
 
     .container {
@@ -126,6 +153,11 @@ img {
 
     li {
         margin-right: 30px !important;
+    }
+
+    h1, .tlt span {
+        font-size: 40px;
+        letter-spacing: 0.25em;
     }
 
     .talen li {
@@ -155,6 +187,11 @@ img {
         margin-right: 30px;
     }
 
+    h1, .tlt span {
+        font-size: 40px;
+        letter-spacing: 0.25em;
+    }
+
     .talen li {
         margin-left: 30px !important;
     }
@@ -178,8 +215,13 @@ img {
         background-position: right !important;
     }
 
+    h1, .tlt span {
+        font-size: 30px;
+        letter-spacing: 0.25em;
+    }
+
     h1 {
-        font-size: 40px !important;
+        font-size: 10px !important;
     }
 
     .navbar {
@@ -198,6 +240,11 @@ img {
 
     h1 {
         font-size: 30px !important;
+    }
+
+    h1, .tlt span {
+        font-size: 30px;
+        letter-spacing: 0.15em;
     }
 
     #input1 {
@@ -234,6 +281,11 @@ img {
 
     h1 {
         font-size: 25px !important;
+    }
+
+    h1, .tlt span {
+        font-size: 20px;
+        letter-spacing: 0.20em;
     }
 
     #input1 {
@@ -282,8 +334,6 @@ li {
     list-style: none;
 }
 
-
-
 .navbar span:before {
     content: '';
     position: absolute;
@@ -304,13 +354,14 @@ li {
     transform: scaleX(1);
 }
 
-a{
+a {
     color: white;
     list-style: none;
 }
-a:hover{
+
+a:hover {
     list-style: none;
-    color:white;
+    color: white;
     text-decoration: none;
 }
 
@@ -372,11 +423,9 @@ a:hover{
 
 /*einde sound pagina*/
 
-
-
 /*info pagina*/
 
-.info_text{
+.info_text {
     position: absolute;
     margin-top: 10%;
     width: 50%;
@@ -389,7 +438,7 @@ a:hover{
     padding-bottom: 1%;
 }
 
-#text2{
+#text2 {
     position: absolute;
     top: 28%;
     left: 5%;
