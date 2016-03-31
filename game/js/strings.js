@@ -604,9 +604,8 @@ StringInstrument.prototype.renderLeapMotion = function() {
 
 StringInstrument.prototype.render = function() {
     if (this.stage.timeDone) {
-        // clear screen
-        this.stage.clearScreen();
-        return;
+        // this.stage.clearScreen();
+        // return;
     }
 
     var that = this;
