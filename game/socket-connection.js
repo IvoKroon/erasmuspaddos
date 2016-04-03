@@ -10,7 +10,7 @@ var minutes = 1 * 5;
 
 module.exports = function(socket) {
   startSockets(socket);
-}
+};
 
 /**
  * Start listening to sockets events

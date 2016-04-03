@@ -3,10 +3,11 @@
  */
 
 // globals
-var HAND_Z_MIN = 700,
-    HAND_Z_MAX = 1800;
+var POINTER_TRAIL_MAX = 10,
+    HANDS_NUM_MAX = 2,
+    STRINGS_NUM_MAX = 16;
 
-var canvas = document.getElementById("strings"),
+var canvas = document.getElementById('strings'),
     ctx = canvas.getContext('2d');
 
 window.requestAnimFrame = (function() {
@@ -23,12 +24,16 @@ window.requestAnimFrame = (function() {
 
 
 
-function Stage(id) {
+function Stage(id, input) {
     this.el = document.getElementById(id);
     this.position();
     this.listeners();
     this.hitZones = [];
     this.prevTime = Date.now();
+    this.timeStarted = false;
+    this.timeDone = false;
+    this.input = input;
+    this.loadTime = Date.now();
 
     return this;
 }
@@ -76,17 +81,25 @@ Stage.prototype.listeners = function() {
         that.position();
     }, false);
 
-    this.el.addEventListener('mousemove', function(e) {
-        var x = e.clientX - that.positionTop,
-            y = e.clientY - that.positionLeft;
+    // START TIMER + RECORDING
+    window.onload = function() {
+        // alert("Go!");
+    };
 
-        that.hitZones.forEach(function(zone) {
-            that.checkPoint(x, y, zone);
-        });
-
-        that.dragging = true;
-        that.prev = [x, y];
-    }, false);
+    // this.el.addEventListener('mousemove', function(e) {
+    //     var x = e.clientX - that.positionTop,
+    //         y = e.clientY - that.positionLeft;
+    //
+    //     that.hitZones.forEach(function(zone) {
+    //         that.checkPoint(0, x, y, zone);
+    //     });
+    //
+    //     that.dragging = true;
+    //     that.prev = [x, y];
+    //
+    //     that.input[0].x = x;
+    //     that.input[0].y = y;
+    // }, false);
 };
 
 
@@ -113,23 +126,64 @@ Stage.prototype.addString = function(rect, string) {
 };
 
 
-Stage.prototype.checkPoint = function(x, y, zone) {
-    if (zone.inside(x, y)) {
-        zone.string.strum();
+Stage.prototype.givePointerColorOfString = function(id, string) {
+    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
+        var r = string.red,
+            g = string.green,
+            b = string.blue,
+            a = 0.4;
+
+        if (i == POINTER_TRAIL_MAX - 1)
+            a = 1.0;
+
+        this.input[id].pointers[i].fill = "rgba(" + r + "," + g + "," + b + "," + a + ")";
     }
 };
 
 
-Stage.prototype.LeapMotionMoved = function(handX, handY) {
+Stage.prototype.checkPoint = function(id, x, y, zone) {
+    if (zone.inside(x, y)) {
+        zone.string.strum();
+        this.givePointerColorOfString(id, zone.string);
+    }
+};
+
+
+Stage.prototype.LeapMotionMoved = function(id, handX, handY) {
     var that = this;
 
     this.hitZones.forEach(function(zone) {
-        that.checkPoint(handX, handY, zone);
+        that.checkPoint(id, handX, handY, zone);
     });
 };
 
 
+Stage.prototype.startTimer = function() {
+    var t = document.getElementsByClassName('timer');
+
+    for (var i = 0; i < t.length; i++) {
+        t[i].style.display = "block";
+    }
+
+    this.timeStarted = true;
+};
+
+
+Stage.prototype.timerDone = function() {
+    if (!this.timeDone) {
+        alert("time is up");
+        this.timeDone = true;
+    }
+};
+
+
 Stage.prototype.timer = function() {
+    if (Date.now() - this.loadTime < 3000)
+        return;
+
+    if (!this.timeStarted)
+        this.startTimer();
+
     var curTime = Date.now();
 
     if (curTime - this.prevTime > 1000) {
@@ -140,8 +194,11 @@ Stage.prototype.timer = function() {
             s    = parseInt(sec1.innerHTML),
             ss   = parseInt(sec2.innerHTML);
 
-        if (m == 0 && s == 0 && ss == 0)
+        // END TIMER + RECORDING
+        if (m == 0 && s == 0 && ss == 0) {
+            this.timerDone();
             return;
+        }
 
         if (m == 1) {
             m = 0;
@@ -164,6 +221,17 @@ Stage.prototype.timer = function() {
 
         this.prevTime = curTime;
     }
+};
+
+
+Stage.prototype.clearScreen = function() {
+    var t = document.getElementsByClassName('timer');
+
+    for (var i = 0; i < t.length; i++) {
+        t[i].style.display = "none";
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 
@@ -203,6 +271,7 @@ function HarpString(rect, id) {
     this.red = 0;
     this.green = 0;
     this.blue = 0;
+    this.color = "rgb(" + this.r + "," + this.g + "," + this.b + ")";
 
     this.isGlowing = false;
     this.shadowColor = "";
@@ -245,8 +314,9 @@ HarpString.prototype.stringColor = function(stringNum) {
     this.red = r;
     this.green = g;
     this.blue = b;
+    this.color = "rgb(" + r + "," + g + "," + b + ")";
 
-    return "rgb(" + r + "," + g + "," + b + ")";
+    return this.color;
 };
 
 
@@ -311,6 +381,7 @@ HarpString.prototype.render = function(stringNum) {
         this.y + this.height
     );
     ctx.stroke();
+    ctx.closePath();
 
     this._strumForce *= 0.985;
     this.a += 0.8;
@@ -339,189 +410,125 @@ HarpString.prototype.shadowBlurVal = function() {
 
 
 
-function Circle(x, y, z, radius, start, end, dir, fill) {
+function Pointer(id, x, y, start, end, dir, fill, stroke, lwidth) {
+    this.id = id;
     this.x = x;
     this.y = y;
-    this.z = z;
-    this.radius = radius;
+    this.baseRadius = { min: 15, max: 18 };
+    this.radius = this.baseRadius.min;
     this.start = start;
     this.end = end;
     this.direction = dir;
     this.fill = fill;
+    this.strokeStyle = stroke;
+    this.lineWidth = lwidth;
+    this.tick = 0;
 
     return this;
 }
 
 
-Circle.prototype.render = function() {
-    ctx.globalCompositeOperation = "lighter";
+Pointer.prototype.getPos = function (normalizedPosition) {
+    this.x = canvas.width * normalizedPosition[0];
+    this.y = canvas.height * (1 - normalizedPosition[1]);
+
+    return { x: this.x,
+        y: this.y };
+};
+
+
+Pointer.prototype.draw = function() {
     ctx.shadowBlur = 0;
-    ctx.beginPath();
+    ctx.lineWidth = this.lineWidth;
+    ctx.strokeStyle = this.strokeStyle;
     ctx.fillStyle = this.fill;
-    ctx.arc(this.x, this.y, this.radius, this.start, this.end, false);
     ctx.fill();
+    ctx.stroke();
+};
+
+
+Pointer.prototype.render = function() {
+    // pulse
+    var osc = 0.5 + Math.sin(this.tick / 13);
+    this.radius = this.baseRadius.min + this.id + ((this.baseRadius.max - this.baseRadius.min) * osc);
+
+    this.tick++;
+    if (this.tick > Number.MAX_VALUE)
+        this.tick = 0;
+
+    // create circle and position it
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, this.start, this.end, this.direction);
     ctx.closePath();
+    this.draw();
 };
 
 
 
 
-function Pointer(x, y, z, radius, start, end, dir, fill) {
+function Input(x, y) {
     this.x = x;
     this.y = y;
-    this.z = z;
-    this.radius = radius;
-    this.start = start;
-    this.end = end;
-    this.direction = dir;
-    this.fill = fill;
 
-    this.trailNum = 2;
-    this.trails = [];
-    this.createTrail();
-
-    return this;
-}
-
-
-Pointer.prototype.createTrail = function() {
-    for (var i = 0; i < this.trailNum; i++) {
-        // var r = Math.floor(Math.random() * 255),
-        //     g = Math.floor(Math.random() * 255),
-        //     b = Math.floor(Math.random() * 255),
-        //     color = "rgb(" + r + "," + g + "," + b + ")";
-
-        var color = "rgba(255,255,255,0.1)";
-
-        var c = new Circle(this.x, this.y, HAND_Z_MIN, this.radius, this.start, this.end, this.direction, color);
-        this.trails.push(c);
-
-        // console.log("Pointer x: " + this.x + " Added trail #" + i +  " with colors: " + color);
-    }
-};
-
-
-
-
-function Input(amount) {
-    this.hands = [];
-    this.handsNum = amount;
-    this.doRenderHands = true;
-
-    this.create();
+    // create pointer + trail
+    this.pointers = this.create();
 
     return this;
 }
 
 
 Input.prototype.create = function() {
-    var x = canvas.width/2 - 82,
-        y = canvas.height/2;
+    var a = [];
+    var fill, stroke, lineWidth;
 
-    var hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
-    this.hands.push(hand);
+    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
+        fill = "rgba(255,255,255,0.4)";
+        stroke = "rgba(0,0,0,0)";
+        lineWidth = 0;
 
-    x = canvas.width/2 + 74;
-    y = canvas.height/2;
-
-    hand = new Pointer(x, y, HAND_Z_MIN, 25, 25, 0, 2 * Math.PI, "rgb(0,0,0)");
-    this.hands.push(hand);
-};
-
-
-Input.prototype.getPos = function (normalizedPosition, id) {
-    var pos = [];
-
-    this.hands[id].x = canvas.width * normalizedPosition[0];
-    this.hands[id].y = canvas.height * (1 - normalizedPosition[1]);
-    this.hands[id].z = (canvas.width + canvas.height) * normalizedPosition[2];
-
-    pos.push(this.hands[id].x);
-    pos.push(this.hands[id].y);
-    pos.push(this.hands[id].z);
-
-    return { x: this.hands[id].x,
-             y: this.hands[id].y,
-             z: this.hands[id].z };
-};
-
-
-Input.prototype.draw = function(h, handZ) {
-    h.displayOpacity = 2.75 - 0.0025 * handZ;
-    if (h.displayOpacity < 0.5)
-        h.displayOpacity = 0.5;
-
-    ctx.shadowBlur = 0;
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = "rgba(255, 255, 255, 1)";
-    ctx.fillStyle = "rgba(200, 100, 100, " + h.displayOpacity + ")";
-    ctx.fill();
-    ctx.stroke();
-
-    // make circle blue if we are in the "touch area"
-    if (h.displayOpacity >= 1) {
-        ctx.lineWidth = 10;
-        ctx.strokeStyle = "rgba(255,255,255,1)";
-        ctx.fillStyle = "rgba(0, 100, 255, 1)";
-        ctx.fill();
-        ctx.stroke();
-    }
-};
-
-
-Input.prototype.drawTrail = function(hand, handX, handY) {
-    // grab trail array of this pointer (hand)
-    var t = hand.trails;
-
-    for (var i = 0; i < t.length; i++) {
-        var t1 = t[i],
-            t2 = t[i-1];
-
-        t[t.length - 1].render();
-
-        t[t.length - 1].x = handX;
-        t[t.length - 1].y = handY;
-        t1.render();
-
-        if(i > 0) {
-            t2.x += (t1.x - t2.x) * 0.6;
-            t2.y += (t1.y - t2.y) * 0.6;
+        if (i == POINTER_TRAIL_MAX - 1) {
+            fill = "rgba(0,100,255,1)";
+            stroke = "rgba(255,255,255,1)";
+            lineWidth = 10;
         }
+
+        var h = new Pointer(i, this.x, this.y, 25, 0, 2 * Math.PI, fill, stroke, lineWidth);
+        a.push(h);
     }
 
-    // console.log("handX: " + handX + " trailendX: " + t[t.length - 1].x);
+    return a;
 };
 
 
-Input.prototype.render = function(id, handX, handY, handZ) {
-    var h = this.hands[id];
+Input.prototype.render = function() {
+    var p = this.pointers;
 
-    // create circle and position it
-    ctx.beginPath();
-    ctx.arc(handX, handY, h.radius, h.start, h.end, h.direction);
+    for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
+        var p1 = p[i],
+            p2 = p[i - 1];
 
-    // set opacity according to Z value and
-    // don't render hand pointers out of range
-    if (handZ < HAND_Z_MAX) {
-        this.draw(h, handZ);
+        p[p.length - 1].x = this.x;
+        p[p.length - 1].y = this.y;
+
+        if (i > 0) {
+            p2.x += (p1.x - p2.x) * 0.5;
+            p2.y += (p1.y - p2.y) * 0.5;
+        }
+
+        p1.render(i);
     }
-
-    ctx.closePath();
-
-    // render and draw trail
-    this.drawTrail(h, handX, handY);
 };
 
 
 
 
-function StringInstrument(stageID, stringNum, handsNum) {
+function StringInstrument(stageID) {
     this.strings = [];
-    this.stringNum = stringNum;
-    this.stage = new Stage(stageID);
 
-    this.handsNum = handsNum;
-    this.input = new Input(this.handsNum);
+    this.input = [];
+    this.createInput();
+
+    this.stage = new Stage(stageID, this.input);
 
     this.clr = new Leap.Controller();
     this.clr.connect();
@@ -537,7 +544,7 @@ function StringInstrument(stageID, stringNum, handsNum) {
 
 
 StringInstrument.prototype.create = function() {
-    for (var i = 0; i < this.stringNum; i++) {
+    for (var i = 0; i < STRINGS_NUM_MAX; i++) {
         var srect = new Rect(50 + i * 78, 0, 10, 800);
         var s     = new HarpString(srect, i);
 
@@ -547,51 +554,60 @@ StringInstrument.prototype.create = function() {
 };
 
 
-// MOVE TO STAGE?
-// NOTHING TO DO WITH THE STRINGS
+StringInstrument.prototype.createInput = function() {
+    for (var i = 0; i < HANDS_NUM_MAX; i++) {
+        var x = -50 + canvas.width/2 + i * 100;
+        var y = canvas.height/2;
+        var inp = new Input(x, y);
+        this.input.push(inp);
+    }
+};
+
 StringInstrument.prototype.renderLeapMotion = function() {
     var that = this;
 
     this.clr.on("frame", function (frame) {
         if (frame.pointables.length > 0) {
-            that.input.doRenderHands = true;
-
-            //Get a pointable (hand) and normalize the index finger's dip position
             for (var i = 0, len = frame.hands.length; i < len; i++)
             {
                 // hand limit
-                var amount = i + 1;
-                if (amount > that.handsNum)
+                var curHands = i + 1;
+                if (curHands > HANDS_NUM_MAX)
                     return;
 
+                //Get a pointable (hand) and normalize the index finger's dip position
                 var hand = frame.hands[i],
                     interactionBox = frame.interactionBox,
                     normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
 
                 // Convert the normalized coordinates to span the canvas
-                var handPos = that.input.getPos(normalizedPosition, i);
+                var handPos = that.input[i].pointers[POINTER_TRAIL_MAX - 1].getPos(normalizedPosition);
+
+                // store main pointer's info in its input object
+                that.input[i].x = handPos.x;
+                that.input[i].y = handPos.y;
 
                 // loop through all objects
                 for (var j = 0, len2 = frame.hands.length; j < len2; j++)
                 {
-                    // only check string collision inside canvas and in Z-range
-                    var isInRange = handPos.x > 0
-                     && handPos.y < canvas.width
-                     && handPos.z < HAND_Z_MIN;
+                    // only check string collision inside canvas
+                    var isInRange = handPos.x > 0 && handPos.y < canvas.width;
 
-                    if (isInRange) {
-                        that.stage.LeapMotionMoved(handPos.x, handPos.y);
+                    if (isInRange && that.stage.timeStarted) {
+                        that.stage.LeapMotionMoved(i, handPos.x, handPos.y);
                     }
                 }
             }
-        } else {
-            that.input.doRenderHands = false;
         }
     });
 };
 
-
 StringInstrument.prototype.render = function() {
+    if (this.stage.timeDone) {
+        // this.stage.clearScreen();
+        // return;
+    }
+
     var that = this;
 
     // loop
@@ -606,16 +622,14 @@ StringInstrument.prototype.render = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // render strings
-    for (var i = 0; i < this.stringNum; i++) {
+    for (var i = 0; i < STRINGS_NUM_MAX; i++) {
         this.strings[i].render(i);
     }
 
-    // render hands
-    if (this.input.doRenderHands) {
-        for (i = 0; i < this.handsNum; i++) {
-            this.input.render(i, this.input.hands[i].x, this.input.hands[i].y, this.input.hands[i].z);
-        }
+    // render pointers
+    for (i = 0; i < HANDS_NUM_MAX; i++) {
+        this.input[i].render();
     }
 };
 
-var harp = new StringInstrument("stage", 16, 2);
+var harp = new StringInstrument("stage");
