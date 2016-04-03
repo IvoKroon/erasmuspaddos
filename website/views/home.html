@@ -22,15 +22,29 @@
                 <input id="input2" type="image" src="image/play.png" alt="Submit" >
                 <br />
             </form>
+            <br>
+            <br>
             <div id="player-wrapper">
                 <% if(sound){ %>
+                <br>
+
+
                     <%- include('partials/player.html', {sound:sound}) %>
+                <br>
+                <div class="fb-share-button" data-href="http://localhost:3001/?code=<%- code %>" data-layout="button"></div>
+
                 <% } %>
             </div>
         </div>
 
     </div>
     <%- include('partials/scripts.html') %>
-    <script src="js/website/home.js"></script>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=1387904601516967";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
 </body>
 </html>

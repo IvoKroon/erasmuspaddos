@@ -1,3 +1,4 @@
+// Object.assign polyfill
 if (typeof Object.assign != 'function') {
   (function () {
     Object.assign = function (target) {

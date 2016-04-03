@@ -27,10 +27,17 @@ h1, .tlt span {
     height: 10rem;
 }
 
+
+.share-buttons {
+    float:right;
+}
+
+.share-buttons img{
+    width: 53px;
+}
 .error {
     color: red;
     font-size: 18px;
-    display: none;
 }
 
 /*info pagina*/
