@@ -93,25 +93,6 @@ Interaction.prototype.leapMove = function () {
     });
 };
 
-//function Pointer(x, y, z, radius, start, end, dir, opacity, fill) {
-//    this.x = x;
-//    this.y = y;
-//    this.z = z;
-//    this.radius = radius;
-//    this.start = start;
-//    this.end = end;
-//    this.direction = dir;
-//    this.opacity = opacity;
-//    this.fill = fill;
-//
-//    return this;
-//}
-
-
-
-
-
-
 Interaction.prototype.moveObject = function (that, positions, nows,startTime) {
     var y = that.canvas.height / 2 + positions[1] * 2 - 300;
     var x = that.canvas.width / 2 + positions[0] * 3;
@@ -198,69 +179,6 @@ function Pointer(x, y, z, radius, start, end, dir, opacity, fill) {
     return this;
 }
 
-//Interaction.prototype.mouseMovement = function(){
-//    var that = this;
-//    //window.requestAnimationFrame(draw);
-//    //use this thing lalala
-//    //allalala
-//    var now = Math.floor(Date.now());
-//    //var startTime = 0;
-//    var nows = [now,now,now];
-//    var startTime = [0,0,0];
-//    document.addEventListener("mousemove", function(e) {
-//        that.ctx.clearRect(0,0,that.canvas.width,that.canvas.height);
-//        var cx = e.clientX,
-//            cy = e.clientY,
-//            cw = 20,
-//            ch = 20;
-//
-//        that.ctx.beginPath();
-//        that.ctx.fillStyle = "#FF0000";
-//        that.ctx.rect(cx, cy, cw, ch);
-//        //ctx.arc(100,75,50,0,2*Math.PI);
-//        that.ctx.fillStyle = "#00FF00";
-//        //that.ctx.arc(cx,cy,cw/2,0,2*Math.PI);
-//        that.ctx.fill();
-//
-//        that.create();
-//        that.render();
-//
-//        for (var i = 0; i < 3; i++) {
-//            var bx = that.buttonList[i].x,
-//                by = that.buttonList[i].y,
-//                bw = that.buttonList[i].w,
-//                bh = that.buttonList[i].h;
-//
-//            if( cx < bx + bw &&
-//                cx + cw > bx &&
-//                cy < by + bh &&
-//                cy + ch > by) {
-//                //return true;
-//                console.log('in'+i);
-//
-//                startTime[i] = Math.floor(Date.now());
-//
-//                if (startTime[i] - nows[i] > 1000) {
-//
-//                    console.log(that.buttonList[i].name);
-//
-//                    if(that.buttonList[i].name == "start"){
-//                        alert("start");
-//                    }
-//                    //alert('Go' + i);
-//                    //loadNext();
-//                }
-//            }else{
-//                //console.log('out'+i);
-//                nows[i] = Math.floor(Date.now());
-//                startTime[i] = nows[i];
-//            }
-//
-//        }
-//    });
-//};
-
-
 Interaction.prototype.create = function(){
     for(var i = 0; i < this.buttonNum; i++){
         var b = new Button(
@@ -300,7 +218,7 @@ Button.prototype.render = function(ctx){
 
 Button.prototype.remove = function(ctx){
     ctx.clearRect(x,y,w,h);
-}
+};
 
 
 
