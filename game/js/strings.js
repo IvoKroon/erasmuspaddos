@@ -86,20 +86,20 @@ Stage.prototype.listeners = function() {
         // alert("Go!");
     };
 
-    // this.el.addEventListener('mousemove', function(e) {
-    //     var x = e.clientX - that.positionTop,
-    //         y = e.clientY - that.positionLeft;
-    //
-    //     that.hitZones.forEach(function(zone) {
-    //         that.checkPoint(0, x, y, zone);
-    //     });
-    //
-    //     that.dragging = true;
-    //     that.prev = [x, y];
-    //
-    //     that.input[0].x = x;
-    //     that.input[0].y = y;
-    // }, false);
+    this.el.addEventListener('mousemove', function(e) {
+        var x = e.clientX - that.positionTop,
+            y = e.clientY - that.positionLeft;
+
+        that.hitZones.forEach(function(zone) {
+            that.checkPoint(0, x, y, zone);
+        });
+
+        that.dragging = true;
+        that.prev = [x, y];
+
+        that.input[0].x = x;
+        that.input[0].y = y;
+    }, false);
 };
 
 
@@ -563,6 +563,7 @@ StringInstrument.prototype.createInput = function() {
     }
 };
 
+
 StringInstrument.prototype.renderLeapMotion = function() {
     var that = this;
 
@@ -601,6 +602,7 @@ StringInstrument.prototype.renderLeapMotion = function() {
         }
     });
 };
+
 
 StringInstrument.prototype.render = function() {
     if (this.stage.timeDone) {
