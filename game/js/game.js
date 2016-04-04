@@ -856,7 +856,7 @@ Menu.prototype.createScreens = function() {
         text1: "START"
     };
 
-    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text2);
+    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text1);
     this.screens.push(s);
 
     this.screenNum = this.screens.length;
