@@ -688,16 +688,6 @@ Button.prototype.colorTransition = function() {
 };
 
 
-// button press action
-Button.prototype.press = function() {
-    if (!this.isPressed) {
-        _screenID++;
-
-        this.isPressed = true;
-    }
-};
-
-
 // button is being hovered by pointer or mouse
 Button.prototype.hovered = function() {
     if (this.isHovered) {
@@ -706,6 +696,21 @@ Button.prototype.hovered = function() {
         if (this.fill === COLOR_GREEN_RGB) {
             this.press();
         }
+    }
+};
+
+
+Button.prototype.unhover = function() {
+    this.isHovered = false;
+    this.fill = COLOR_RED_RGB;
+};
+
+
+// button press action
+Button.prototype.press = function() {
+    if (!this.isPressed) {
+        _screenID++;
+        this.isPressed = true;
     }
 };
 
@@ -741,7 +746,10 @@ function Screen(id, buttonNum) {
 
 
 Screen.prototype.create = function(arg) {
-    for (var i = 4, j = 0; i < arg.length; i++) {
+    for (var i = 4, j = 0; i < arg.length; i++)
+    {
+        // id, x, y, width, height, text, fillStyle
+        // buttons share same size with each other
         var b = new Button(j, arg[i], arg[++i], arg[2], arg[3], arg[++i], "rgba(255,0,0,1)");
         j++;
 
@@ -757,7 +765,7 @@ Screen.prototype.render = function() {
 };
 
 
-Screen.prototype.unhovered = function() {
+Screen.prototype.unhover = function() {
     for (var i = 0; i < this.buttons.length; i++) {
         this.buttons[i].isHovered = false;
         this.buttons[i].fill = COLOR_RED_RGB;
@@ -767,31 +775,37 @@ Screen.prototype.unhovered = function() {
 
 // checks if our input is inside a rectangle
 Screen.prototype.collisionRect = function(x, y) {
-    var result = -1;
-
     for (var i = 0; i < this.buttons.length; i++) {
-        var bx1 = this.buttons[i].x,
-            bx2 = this.buttons[i].x + this.buttons[i].width,
-            by1 = this.buttons[i].y,
-            by2 = this.buttons[i].y + this.buttons[i].height;
+        var res = false;
+        var b   = this.buttons[i],
+            bx1 = b.x,
+            by1 = b.y,
+            bx2 = b.x + b.width,
+            by2 = b.y + b.height;
 
         if (x > bx1 && x < bx2) {
             if (y > by1 && y < by2) {
-                result = i;
+                res = true;
             }
         }
-    }
 
-    return result;
+        // unhover
+        if (!res && b.isHovered) {
+            b.isHovered = false;
+            b.unhover();
+        }
+
+        // hover
+        if (res && !b.isHovered) {
+            b.isHovered = true;
+        }
+    }
 };
 
 
 // browser events
 Screen.prototype.listeners = function() {
     var that = this;
-
-    that.dragging = false;
-    that.limit = false;
 
     window.addEventListener('resize', function() {
         that.position();
@@ -801,47 +815,11 @@ Screen.prototype.listeners = function() {
         that.position();
     }, false);
 
-    document.addEventListener('click', function(e) {
-        var clickX  = e.clientX,
-            clickY  = e.clientY;
-
-        for (var i = 0; i < that.buttons.length; i++) {
-            var b   = that.buttons[i],
-                bx1 = b.x,
-                by1 = b.y,
-                bx2 = b.x + b.width,
-                by2 = b.y + b.height,
-                didHitButton = that.collisionRect(clickX, clickY);
-
-            if (didHitButton > -1) {
-                b.press();
-            }
-        }
-    }, false);
-
     document.addEventListener('mousemove', function(e) {
         var clickX  = e.clientX,
             clickY  = e.clientY;
 
-        for (var i = 0; i < that.buttons.length; i++) {
-            var b   = that.buttons[i],
-                bx1 = b.x,
-                by1 = b.y,
-                bx2 = b.x + b.width,
-                by2 = b.y + b.height,
-                didHitButton = that.collisionRect(clickX, clickY);
-
-            if (didHitButton > -1) {
-                b.isHovered = true;
-            } else {
-                // reset variables if not hovered anymore
-                if (b.fill !== COLOR_RED_RGB) {
-                    b.fill = COLOR_RED_RGB;
-                    b.isHovered = false;
-                    b.isPressed = false;
-                }
-            }
-        }
+            that.collisionRect(clickX, clickY);
     }, false);
 };
 
@@ -880,8 +858,11 @@ Menu.prototype.createScreens = function() {
         text1: "START"
     };
 
-    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1,
-        screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text1);
+    // id, button amount, width, height, x, y, text
+    var s = new Screen(0, 1,
+        screenLayout.w, screenLayout.h,
+        screenLayout.x1, screenLayout.y1,
+        screenLayout.text1);
     this.screens.push(s);
 
     this.screenNum = this.screens.length;
@@ -1040,12 +1021,6 @@ Game.prototype.renderLeapMotion = function() {
                 that.input[i].y = handPos.y;
 
                 var b = that.menu.screens[_screenID].collisionRect(that.input[i].x, that.input[i].y);
-
-                if (b > -1) {
-                    that.menu.screens[_screenID].buttons[b].isHovered = true;
-                } else {
-                    that.menu.screens[_screenID].unhovered();
-                }
             }
         }
     });
@@ -1073,8 +1048,8 @@ Game.prototype.gameOver = function(code) {
     clearRect();
     this.harp.stage.clearScreen();
 
-    ctx.font = "180px Arial";
-    var id = "Uw id: " +  code;
+    ctx.font = "120px Arial";
+    var id = "Uw ID: " +  code;
     ctx.fillText(id, canvas.width/2, canvas.height/2);
 
     setTimeout(this.doOver, 10000);
