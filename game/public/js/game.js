@@ -95,6 +95,21 @@ Stage.prototype.listeners = function() {
     window.addEventListener('scroll', function() {
         that.position();
     }, false);
+
+    this.el.addEventListener('mousemove', function(e) {
+        var x = e.clientX - that.positionTop,
+            y = e.clientY - that.positionLeft;
+
+        that.hitZones.forEach(function(zone) {
+            that.checkPoint(0, x, y, zone);
+        });
+
+        that.dragging = true;
+        that.prev = [x, y];
+
+        that.input[0].x = x;
+        that.input[0].y = y;
+    }, false);
 };
 
 
@@ -166,7 +181,6 @@ Stage.prototype.startTimer = function() {
 
 Stage.prototype.timerDone = function() {
     if (!this.timeDone) {
-        _screenID++;
         this.timeDone = true;
     }
 };
@@ -586,7 +600,7 @@ StringInstrument.prototype.renderLeapMotion = function() {
                     // only check string collision inside canvas
                     var isInRange = handPos.x > 0 && handPos.y < canvas.width;
 
-                    if (isInRange && that.stage.timeStarted) {
+                    if (isInRange && that.stage.timeStarted && _screenID == SCREEN_ID_STRINGS) {
                         that.stage.LeapMotionMoved(i, handPos.x, handPos.y);
                     }
                 }
@@ -597,24 +611,22 @@ StringInstrument.prototype.renderLeapMotion = function() {
 
 
 StringInstrument.prototype.render = function() {
-    if (this.stage.timeDone) {
-        // this.stage.clearScreen();
-        // return;
-    }
+    // clear screen
+    clearRect();
+
+    if (_screenID > SCREEN_ID_STRINGS)
+        return;
 
     var that = this;
 
     // loop
     requestAnimFrame(function() {
-        if (_screenID < SCREEN_ID_GAME_OVER)
+        if (_screenID == SCREEN_ID_STRINGS)
             that.render();
     });
 
     // timer
     this.stage.timer();
-
-    // clear screen
-    clearRect();
 
     // render strings
     for (var i = 0; i < STRINGS_NUM_MAX; i++) {
@@ -721,6 +733,7 @@ function Screen(id, buttonNum) {
     this.buttonNum = buttonNum;
     this.buttons = [];
 
+    this.listeners();
     this.create(arguments);
 
     return this;
@@ -773,6 +786,66 @@ Screen.prototype.collisionRect = function(x, y) {
 };
 
 
+// browser events
+Screen.prototype.listeners = function() {
+    var that = this;
+
+    that.dragging = false;
+    that.limit = false;
+
+    window.addEventListener('resize', function() {
+        that.position();
+    }, false);
+
+    window.addEventListener('scroll', function() {
+        that.position();
+    }, false);
+
+    document.addEventListener('click', function(e) {
+        var clickX  = e.clientX,
+            clickY  = e.clientY;
+
+        for (var i = 0; i < that.buttons.length; i++) {
+            var b   = that.buttons[i],
+                bx1 = b.x,
+                by1 = b.y,
+                bx2 = b.x + b.width,
+                by2 = b.y + b.height,
+                didHitButton = that.collisionRect(clickX, clickY);
+
+            if (didHitButton > -1) {
+                b.press();
+            }
+        }
+    }, false);
+
+    document.addEventListener('mousemove', function(e) {
+        var clickX  = e.clientX,
+            clickY  = e.clientY;
+
+        for (var i = 0; i < that.buttons.length; i++) {
+            var b   = that.buttons[i],
+                bx1 = b.x,
+                by1 = b.y,
+                bx2 = b.x + b.width,
+                by2 = b.y + b.height,
+                didHitButton = that.collisionRect(clickX, clickY);
+
+            if (didHitButton > -1) {
+                b.isHovered = true;
+            } else {
+                // reset variables if not hovered anymore
+                if (b.fill !== COLOR_RED_RGB) {
+                    b.fill = COLOR_RED_RGB;
+                    b.isHovered = false;
+                    b.isPressed = false;
+                }
+            }
+        }
+    }, false);
+};
+
+
 
 
 
@@ -807,7 +880,8 @@ Menu.prototype.createScreens = function() {
         text1: "START"
     };
 
-    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text1);
+    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1,
+        screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text1);
     this.screens.push(s);
 
     this.screenNum = this.screens.length;
@@ -902,7 +976,6 @@ Countdown.prototype.loop = function() {
 function Game() {
     this.hasGameStarted = false;
     this.hasCountdownStarted = false;
-    this.isGameOver = false;
     this.menu = "";
     this.harp = "";
     this.countdown = "";
@@ -917,6 +990,7 @@ function Game() {
 
     this.renderLeapMotion();
     this.render();
+
     var that = this;
     iosocket.on('client:upload-finished', function(data) {
         var res = JSON.parse(data);
@@ -994,6 +1068,7 @@ Game.prototype.startCountdown = function() {
 };
 
 Game.prototype.gameOver = function(code) {
+    _screenID++;
     this.clr.disconnect();
     clearRect();
     this.harp.stage.clearScreen();
@@ -1002,7 +1077,7 @@ Game.prototype.gameOver = function(code) {
     var id = "Uw id: " +  code;
     ctx.fillText(id, canvas.width/2, canvas.height/2);
 
-    setTimeout(this.doOver, 5000);
+    setTimeout(this.doOver, 10000);
 };
 
 Game.prototype.doOver = function() {
@@ -1026,9 +1101,6 @@ Game.prototype.render = function() {
     else if (_screenID == SCREEN_ID_STRINGS && !this.hasGameStarted) {
         this.startGame();
         this.hasGameStarted = true;
-    }
-    else if (_screenID == SCREEN_ID_GAME_OVER && !this.isGameOver) {
-        this.isGameOver = true;
     }
 
     if (_screenID == SCREEN_ID_MENU) {

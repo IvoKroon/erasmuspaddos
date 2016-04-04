@@ -62,7 +62,7 @@ app.get('/auth/soundcloud/callback',
 
 app.get('/game', function(req, res) {
   res.render('game');
-})
+});
 app.get('/', function(req, res) {
 	// get access token from db
   dbConnection.query('SELECT access_token from soundcloud', function(err, results) {
