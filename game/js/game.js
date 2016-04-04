@@ -4,13 +4,14 @@
 
 // globals
 var POINTER_TRAIL_MAX = 10,
-    HANDS_NUM_MAX = 2,
+    HANDS_NUM_MAX = 1,
     STRINGS_NUM_MAX = 16;
 
 var COLOR_RED_RGB   = "rgb(255,0,0)",
     COLOR_GREEN_RGB = "rgb(0,255,0)";
 
 var _screenID = 0,
+    SCREEN_ID_MENU = 0,
     SCREEN_ID_COUNTDOWN = 1,
     SCREEN_ID_STRINGS = 2,
     SCREEN_ID_GAME_OVER = 3;
@@ -195,7 +196,7 @@ Stage.prototype.timer = function() {
 
     var curTime = Date.now();
 
-    if (curTime - this.prevTime > 10) {
+    if (curTime - this.prevTime > 1000) {
         var min  = document.getElementById('timer2'),
             sec1 = document.getElementById('timer4'),
             sec2 = document.getElementById('timer5'),
@@ -740,6 +741,8 @@ function Screen(id, buttonNum) {
 
     this.listeners();
     this.create(arguments);
+
+    return this;
 }
 
 
@@ -760,15 +763,32 @@ Screen.prototype.render = function() {
 };
 
 
+Screen.prototype.unhovered = function() {
+    for (var i = 0; i < this.buttons.length; i++) {
+        this.buttons[i].isHovered = false;
+        this.buttons[i].fill = COLOR_RED_RGB;
+    }
+};
+
+
 // checks if our input is inside a rectangle
-Screen.prototype.collisionRect = function(x, y, x1, y1, x2, y2) {
-    if (x > x1 && x < x2) {
-        if (y > y1 && y < y2) {
-            return true;
+Screen.prototype.collisionRect = function(x, y) {
+    var result = -1;
+
+    for (var i = 0; i < this.buttons.length; i++) {
+        var bx1 = this.buttons[i].x,
+            bx2 = this.buttons[i].x + this.buttons[i].width,
+            by1 = this.buttons[i].y,
+            by2 = this.buttons[i].y + this.buttons[i].height;
+
+        if (x > bx1 && x < bx2) {
+            if (y > by1 && y < by2) {
+                result = i;
+            }
         }
     }
 
-    return false;
+    return result;
 };
 
 
@@ -825,12 +845,11 @@ Screen.prototype.listeners = function() {
 
 
 // Menu Constructor
-function Menu(x, y, w, h, b) {
+function Menu(x, y, w, h) {
     this.x = x;
     this.y = y;
     this.width = w;
     this.height = h;
-    this.buttonsNum = b;
     this.buttons = [];
     this.screenNum = 0;
     this.screens = [];
@@ -956,24 +975,97 @@ function Game() {
     this.harp = "";
     this.countdown = "";
 
-    this.render();
     this.startMenu();
+
+    this.input = [];
+    this.createInput();
+
+    this.clr = new Leap.Controller();
+    this.clr.connect();
+
+    this.renderLeapMotion();
+    this.render();
+
+    return this;
 }
 
 
-Game.prototype.startMenu = function() {
-    this.menu = new Menu(0, 0, canvas.width, canvas.height, 4);
+Game.prototype.createInput = function() {
+    for (var i = 0; i < HANDS_NUM_MAX; i++) {
+        var x = -50 + canvas.width/2 + i * 100;
+        var y = canvas.height/2;
+
+        var input = new Input(x, y);
+        this.input.push(input);
+    }
 };
 
+
+Game.prototype.renderLeapMotion = function() {
+    if (_screenID > SCREEN_ID_MENU)
+        return;
+
+    var that = this;
+
+    this.clr.on("frame", function (frame) {
+        if (frame.pointables.length > 0) {
+            for (var i = 0, len = frame.hands.length; i < len; i++)
+            {
+                // hand limit
+                var curHands = i + 1;
+                if (curHands > HANDS_NUM_MAX)
+                    return;
+
+                //Get a pointable (hand) and normalize the index finger's dip position
+                var hand = frame.hands[i],
+                    interactionBox = frame.interactionBox,
+                    normalizedPosition = interactionBox.normalizePoint(hand.indexFinger.dipPosition, true);
+
+                // Convert the normalized coordinates to span the canvas
+                var handPos = that.input[i].pointers[POINTER_TRAIL_MAX - 1].getPos(normalizedPosition);
+
+                // store main pointer's info in its input object
+                that.input[i].x = handPos.x;
+                that.input[i].y = handPos.y;
+
+                var b = that.menu.screens[_screenID].collisionRect(that.input[i].x, that.input[i].y);
+
+                if (b > -1) {
+                    that.menu.screens[_screenID].buttons[b].isHovered = true;
+                } else {
+                    that.menu.screens[_screenID].unhovered();
+                }
+            }
+        }
+    });
+};
+
+
+Game.prototype.startMenu = function() {
+    this.menu = new Menu(0, 0, canvas.width, canvas.height);
+};
+
+// GAME
+// STARTS
+// HERE
+// | |
+// | |
+// | |
+// | |
+// \ /
+// \/
 Game.prototype.startGame = function() {
     this.harp = new StringInstrument('canvas');
 };
 
 Game.prototype.startCountdown = function() {
+    HANDS_NUM_MAX = 2;
     this.countdown = new Countdown(Date.now(), 0, 3);
 };
 
 Game.prototype.gameOver = function() {
+    this.clr.disconnect();
+
     clearRect();
     this.harp.stage.clearScreen();
 
@@ -996,6 +1088,10 @@ Game.prototype.render = function() {
         that.render();
     });
 
+    // clear screen
+    // clearRect();
+
+    // decide what screen to display
     if (_screenID == SCREEN_ID_COUNTDOWN && !this.hasCountdownStarted) {
         this.startCountdown();
         this.hasCountdownStarted = true;
@@ -1007,6 +1103,13 @@ Game.prototype.render = function() {
     else if (_screenID == SCREEN_ID_GAME_OVER && !this.isGameOver) {
         this.gameOver();
         this.isGameOver = true;
+    }
+
+    if (_screenID == SCREEN_ID_MENU) {
+        for (var i = 0; i < HANDS_NUM_MAX; i++) {
+            this.input[i].render();
+            // console.log(this.input[i].x);
+        }
     }
 };
 
