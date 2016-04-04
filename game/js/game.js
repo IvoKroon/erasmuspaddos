@@ -661,13 +661,14 @@ StringInstrument.prototype.render = function() {
 
 
 // Button Constructor
-function Button(id, x, y, w, h, fill) {
+function Button(id, x, y, w, h, text, fill) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.width = w;
     this.height = h;
     this.fill = fill;
+    this.text = text;
     this.isHovered = false;
     this.isPressed = false;
 
@@ -722,6 +723,10 @@ Button.prototype.render = function() {
     ctx.fillStyle = this.fill;
     ctx.rect(this.x, this.y, this.width, this.height);
     ctx.fill();
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.font = "40px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(this.text, this.x + this.width/2, this.y + this.height/2 + 10);
 };
 
 
@@ -740,7 +745,7 @@ function Screen(id, buttonNum) {
 
 Screen.prototype.create = function(arg) {
     for (var i = 4, j = 0; i < arg.length; i++) {
-        var b = new Button(j, arg[i], arg[++i], arg[2], arg[3], "rgba(255,0,0,1)");
+        var b = new Button(j, arg[i], arg[++i], arg[2], arg[3], arg[++i], "rgba(255,0,0,1)");
         j++;
 
         this.buttons.push(b);
@@ -846,29 +851,13 @@ Menu.prototype.createScreens = function() {
         h:  100,
 
         // button 1 position
-        x1: canvas.width/2 - 300,
+        x1: canvas.width/2 - 100,
         y1: canvas.height/2,
-
-        // button 2 position
-        x2: canvas.width/2 + 200,
-        y2: canvas.height/2
+        text1: "START"
     };
 
-    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
+    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.text1, screenLayout.x2, screenLayout.y2, screenLayout.text2);
     this.screens.push(s);
-
-
-    // screen 2
-    // screenLayout = {
-    //     x1: canvas.width/2 - 100,
-    //     y1: canvas.height/2 - 100,
-    //
-    //     x2: canvas.width/2 + 100,
-    //     y2: canvas.height/2 - 100
-    // };
-    //
-    // s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
-    // this.screens.push(s);
 
     this.screenNum = this.screens.length;
 };
