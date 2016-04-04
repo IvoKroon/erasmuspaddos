@@ -418,7 +418,7 @@ a:hover {
     float: right;
     width: 1050px;
     margin-top: 13px;
-    font-size: 13px;
+    font-size: 18px;
     font-weight: bold;
 }
 
@@ -490,8 +490,8 @@ a:hover {
 /*einde info pagina*/
 
 .container {
-    text-align: left;
-    margin-top: 20%;
+    text-align: justify;
+    margin-top: 10%;
 
 }
 
@@ -501,7 +501,7 @@ html {
 }
 
 svg {
-    width: 90%;
+    width: 100%;
     height: inherit;
     margin-bottom: -20%;
 }
@@ -545,8 +545,21 @@ svg #subtitle {
 }
 
 .play_text {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.row {
+    padding: 20px;
+    background-color: rgba(10, 24, 51, 0.48);
+
+}
+
+
+.col-sm-4 {
+    width: 33.33333333%;
+    padding: 0 34px;
 }
 
 
