@@ -4,8 +4,8 @@ var uploadPath = path.resolve(__dirname, './public/uploads/');
 var exec = require('child_process').exec;
 var request = require('request');
 
-// set minutes here
-var minutes = 1 * 60;
+// set seconds here
+var seconds = 60;
 
 
 module.exports = function(socket) {
@@ -26,9 +26,8 @@ function startSockets(socket) {
     var name = Date.now() + '.mp3';
     // set upload path
     var fullPath = path.join(uploadPath + '/' + name);
-
     // execute command to start recording
-    exec('ffmpeg -f dshow -i audio="virtual-audio-capturer" -r 20 -t ' + minutes + ' ' + fullPath,
+    exec('ffmpeg -f dshow -i audio="virtual-audio-capturer" -r 20 -t ' + seconds + ' ' + fullPath,
       function(error, stdout, stderr) {
       console.log('stdout: %s', stdout);
       console.log('stderr: %s', stderr);
