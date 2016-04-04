@@ -132,6 +132,7 @@ img {
         overflow: hidden;
         padding: 2rem 0;
         height: 10rem;
+        margin-left: 13%;
     }
 
     #wrapper {
@@ -159,7 +160,14 @@ img {
     }
 
     li {
-        margin-right: 30px !important;
+        margin-right: 20px !important;
+    }
+
+    .tlt {
+        margin-left: 15%;
+    }
+    #code {
+        margin-left: 145px;
     }
 
     h1, .tlt span {
@@ -191,12 +199,18 @@ img {
 
     li {
 
-        margin-right: 30px;
+        margin-right: 20px;
+    }
+    .tlt {
+        margin-left: 18%;
     }
 
     h1, .tlt span {
-        font-size: 40px;
+        font-size: 50px;
         letter-spacing: 0.25em;
+    }
+    #code {
+        margin-left: 125px;
     }
 
     .talen li {
@@ -223,13 +237,12 @@ img {
     }
 
     h1, .tlt span {
-        font-size: 30px;
+
         letter-spacing: 0.25em;
+        font-size: 40px;
     }
 
-    h1 {
-        font-size: 10px !important;
-    }
+
 
     .navbar {
         display: none !important;
@@ -253,9 +266,14 @@ img {
         font-size: 30px;
         letter-spacing: 0.15em;
     }
+    .tlt {
+        margin-left: 25%;
+        margin-top: -10%;
+        padding: 2rem 0;
+    }
 
     #input1 {
-        width: 230px !important;
+        width: 180px !important;
         margin-top: 20px;
     }
 
@@ -293,6 +311,15 @@ img {
     h1, .tlt span {
         font-size: 20px;
         letter-spacing: 0.20em;
+
+    }
+    .tlt {
+        margin-left: 34%;
+        margin-top: -10%;
+    }
+    #code {
+        margin-left: 32.8%;
+        margin-top: -20px;
     }
 
     #input1 {
@@ -405,6 +432,7 @@ a:hover {
 
 .container {
     margin-top: 5%;
+    text-align: center;
 }
 
 .soundbutt {

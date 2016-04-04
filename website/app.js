@@ -12,7 +12,7 @@ var renderWrap = require('./helpers/renderWrap');
 var PORT = process.env.PORT || 3001;
 
 // require database connection
-require('./db-connection');
+// require('./db-connection');
 // set middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./public'));
