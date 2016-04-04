@@ -739,8 +739,8 @@ function Screen(id, buttonNum) {
 
 
 Screen.prototype.create = function(arg) {
-    for (var i = 2, j = 0; i < arg.length; i++) {
-        var b = new Button(j, arg[i], arg[++i], 100, 100, "rgba(255,0,0,1)");
+    for (var i = 4, j = 0; i < arg.length; i++) {
+        var b = new Button(j, arg[i], arg[++i], arg[2], arg[3], "rgba(255,0,0,1)");
         j++;
 
         this.buttons.push(b);
@@ -836,18 +836,25 @@ function Menu(x, y, w, h, b) {
     return this;
 }
 
-
+// MAKE SCREEN HERE
+// YOU CAN ADD AS MANY BUTTONS AS YOU LIKE
 Menu.prototype.createScreens = function() {
     // screen 1
     var screenLayout = {
-        x1: canvas.width/2 - 100,
+        // button dimensions
+        w:  200,
+        h:  100,
+
+        // button 1 position
+        x1: canvas.width/2 - 300,
         y1: canvas.height/2,
 
-        x2: canvas.width/2 + 100,
+        // button 2 position
+        x2: canvas.width/2 + 200,
         y2: canvas.height/2
     };
 
-    var s = new Screen(0, 2, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
+    var s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
     this.screens.push(s);
 
 
@@ -860,7 +867,7 @@ Menu.prototype.createScreens = function() {
     //     y2: canvas.height/2 - 100
     // };
     //
-    // s = new Screen(0, 2, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
+    // s = new Screen(0, 2, screenLayout.w, screenLayout.h, screenLayout.x1, screenLayout.y1, screenLayout.x2, screenLayout.y2);
     // this.screens.push(s);
 
     this.screenNum = this.screens.length;
