@@ -9,7 +9,8 @@ var COLOR_RED_RGB   = "rgb(255,0,0)",
 var canvas = document.getElementById("menu"),
     ctx    = canvas.getContext('2d');
 
-var _screenID = 0;
+var _screenID = 0,
+    SCREEN_ID_STRINGS = 2;
 
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame ||
@@ -21,22 +22,6 @@ window.requestAnimFrame = (function() {
             window.setTimeout(callback, 1000 / 60);
         };
 })();
-
-function loadjscssfile(filename, filetype){
-    if (filetype=="js"){ //if filename is a external JavaScript file
-        var fileref=document.createElement('script');
-        fileref.setAttribute("type","text/javascript");
-        fileref.setAttribute("src", filename);
-    }
-    else if (filetype=="css"){ //if filename is an external CSS file
-        fileref=document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", filename)
-    }
-    if (typeof fileref!="undefined")
-        document.getElementsByTagName("head")[0].appendChild(fileref)
-}
 
 
 
@@ -78,6 +63,10 @@ Button.prototype.colorTransition = function() {
 Button.prototype.press = function() {
     if (!this.isPressed) {
         _screenID++;
+
+        if (_screenID == SCREEN_ID_STRINGS)
+            setTimeout(loadPage('strings.html'), 500);
+
         this.isPressed = true;
     }
 };
