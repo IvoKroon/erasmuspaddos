@@ -2,21 +2,97 @@
 <html lang="<%=  i18n('_meta', 'locale') %>">
 <head>
     <%- include('partials/styles.html') %>
-    <title><%=  i18n('info', 'title') %></title>
+    <title><%= i18n('info', 'title') %></title>
 </head>
 <body>
-    <%- include('partials/navigation.html') %>
+<%- include('partials/navigation.html') %>
+
+<!--
+autor: Marco Barría
+https://twitter.com/marco_bf
+-->
+
+<section class="intro"></section>
 
 
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="text">
+            <svg id="first">
+                <defs>
+                    <mask id="mask3" x="0" y="0" width="100%" height="100%" >
+                        <!-- alpha rectangle -->
+                        <!-- rectángulo alfa -->
+                        <rect id="alpha" x="0" y="0" width="100%" height="100%"/>
+                        <text id="title" x="15%" y="0" dy="1.2em">Play the bridge</text>
+                    </mask>
+                </defs>
+                <!-- Apply color here! -->
+                <!-- Color aquí -->
+                <rect id="base" x="0" y="0" width="100%" height="40%"/>
+            </svg>
+        </div>
+            <br>
+            <p class ="play_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                Aenean commodo ligula eget dolor. Aenean massa.
+                Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            </p>
+        </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-4">Play the bridge</div>
-            <div class="col-sm-4">Technologie</div>
-            <div class="col-sm-4">Waar</div>
+        <div class="col-sm-4">
+            <div class="text">
+                <svg id="second">
+                    <defs>
+                        <mask id="mask2" x="0" y="0" width="100%" height="100%" >
+                            <!-- alpha rectangle -->
+                            <!-- rectángulo alfa -->
+                            <rect id="alpha" x="0" y="0" width="100%" height="100%"/>
+
+                            <text id="title" x="20%" y="0" dy="1.2em">Technologie</text>
+                        </mask>
+                    </defs>
+                    <!-- Apply color here! -->
+                    <!-- Color aquí -->
+                    <rect id="base" x="0" y="0" width="100%" height="40%"/>
+                </svg>
+            </div>
+            <br>
+            <p class="play_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                Aenean commodo ligula eget dolor. Aenean massa.
+                Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            </p>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="text">
+                <svg id="third">
+                    <defs>
+                        <mask id="mask1" x="0" y="0" width="100%" height="100%" >
+                            <!-- alpha rectangle -->
+                            <!-- rectángulo alfa -->
+                            <rect id="alpha" x="0" y="0" width="100%" height="100%"/>
+
+                            <text id="title" x="35%" y="0" dy="1.2em">Waar</text>
+                        </mask>
+                    </defs>
+                    <!-- Apply color here! -->
+                    <!-- Color aquí -->
+                    <rect id="base" x="0" y="0" width="100%" height="40%"/>
+                </svg>
+            </div>
+            <br>
+            <p class="play_text">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+                Aenean commodo ligula eget dolor. Aenean massa.
+                Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            </p>
         </div>
     </div>
+</div>
 
-    <%- include('partials/scripts.html') %>
+<%- include('partials/scripts.html') %>
 </body>
 </html>
