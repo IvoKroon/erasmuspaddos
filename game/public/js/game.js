@@ -95,26 +95,6 @@ Stage.prototype.listeners = function() {
     window.addEventListener('scroll', function() {
         that.position();
     }, false);
-
-    // START TIMER + RECORDING
-    window.onload = function() {
-        // alert("Go!");
-    };
-
-    this.el.addEventListener('mousemove', function(e) {
-        var x = e.clientX - that.positionTop,
-            y = e.clientY - that.positionLeft;
-
-        that.hitZones.forEach(function(zone) {
-            that.checkPoint(0, x, y, zone);
-        });
-
-        that.dragging = true;
-        that.prev = [x, y];
-
-        that.input[0].x = x;
-        that.input[0].y = y;
-    }, false);
 };
 
 
@@ -741,7 +721,6 @@ function Screen(id, buttonNum) {
     this.buttonNum = buttonNum;
     this.buttons = [];
 
-    this.listeners();
     this.create(arguments);
 
     return this;
@@ -791,55 +770,6 @@ Screen.prototype.collisionRect = function(x, y) {
     }
 
     return result;
-};
-
-
-// browser events
-Screen.prototype.listeners = function() {
-    var that = this;
-
-    document.addEventListener('click', function(e) {
-        var clickX  = e.clientX,
-            clickY  = e.clientY;
-
-        for (var i = 0; i < that.buttons.length; i++) {
-            var b   = that.buttons[i],
-                bx1 = b.x,
-                by1 = b.y,
-                bx2 = b.x + b.width,
-                by2 = b.y + b.height,
-                didHitButton = that.collisionRect(clickX, clickY, bx1, by1, bx2, by2);
-
-            if (didHitButton) {
-                b.press();
-            }
-        }
-    }, false);
-
-    document.addEventListener('mousemove', function(e) {
-        var clickX  = e.clientX,
-            clickY  = e.clientY;
-
-        for (var i = 0; i < that.buttons.length; i++) {
-            var b   = that.buttons[i],
-                bx1 = b.x,
-                by1 = b.y,
-                bx2 = b.x + b.width,
-                by2 = b.y + b.height,
-                didHitButton = that.collisionRect(clickX, clickY, bx1, by1, bx2, by2);
-
-            if (didHitButton) {
-                b.isHovered = true;
-            } else {
-                // reset variables if not hovered anymore
-                if (b.fill !== COLOR_RED_RGB) {
-                    b.fill = COLOR_RED_RGB;
-                    b.isHovered = false;
-                    b.isPressed = false;
-                }
-            }
-        }
-    }, false);
 };
 
 
@@ -1000,7 +930,7 @@ function Game() {
 Game.prototype.createInput = function() {
     for (var i = 0; i < HANDS_NUM_MAX; i++) {
         var x = -50 + canvas.width/2 + i * 100;
-        var y = canvas.height/2;
+        var y = 100;
 
         var input = new Input(x, y);
         this.input.push(input);
@@ -1052,22 +982,14 @@ Game.prototype.startMenu = function() {
     this.menu = new Menu(0, 0, canvas.width, canvas.height);
 };
 
-// GAME
-// STARTS
-// HERE
-// | |
-// | |
-// | |
-// | |
-// \ /
-// \/
+
 Game.prototype.startGame = function() {
+    HANDS_NUM_MAX = 2;
     this.harp = new StringInstrument('canvas');
     iosocket.emit('server:start-recording', 'record!!');
 };
 
 Game.prototype.startCountdown = function() {
-    HANDS_NUM_MAX = 2;
     this.countdown = new Countdown(Date.now(), 0, 3);
 };
 
@@ -1081,9 +1003,6 @@ Game.prototype.gameOver = function(code) {
     ctx.fillText(id, canvas.width/2, canvas.height/2);
 
     setTimeout(this.doOver, 5000);
-
-
-
 };
 
 Game.prototype.doOver = function() {
@@ -1099,9 +1018,6 @@ Game.prototype.render = function() {
         that.render();
     });
 
-    // clear screen
-    // clearRect();
-
     // decide what screen to display
     if (_screenID == SCREEN_ID_COUNTDOWN && !this.hasCountdownStarted) {
         this.startCountdown();
@@ -1112,14 +1028,12 @@ Game.prototype.render = function() {
         this.hasGameStarted = true;
     }
     else if (_screenID == SCREEN_ID_GAME_OVER && !this.isGameOver) {
-       // this.gameOver();
         this.isGameOver = true;
     }
 
     if (_screenID == SCREEN_ID_MENU) {
         for (var i = 0; i < HANDS_NUM_MAX; i++) {
             this.input[i].render();
-            // console.log(this.input[i].x);
         }
     }
 };
