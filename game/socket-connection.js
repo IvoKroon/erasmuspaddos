@@ -5,7 +5,7 @@ var exec = require('child_process').exec;
 var request = require('request');
 
 // set minutes here
-var minutes = 1 * 5;
+var minutes = 1 * 60;
 
 
 module.exports = function(socket) {
@@ -52,7 +52,6 @@ function uploadToSC(socket, path) {
     if (err) {
       return console.error('upload failed:', err);
     }
-
     try {
       var response = JSON.parse(body);
       saveSound(response, function(id) {
