@@ -203,6 +203,7 @@ Stage.prototype.timer = function() {
         // END TIMER + RECORDING
         if (m == 0 && s == 0 && ss == 0) {
             this.timerDone();
+            // game.gameOver(1);                   // test
             return;
         }
 
@@ -238,6 +239,7 @@ Stage.prototype.clearScreen = function() {
     }
 
     clearRect();
+    console.log("Cleared screen");
 };
 
 
@@ -357,6 +359,8 @@ HarpString.prototype.glowStringColor = function () {
 
 
 HarpString.prototype.render = function(stringNum) {
+    // console.log("harpString render");
+
     // determine color of glow
     this.shadowColor = this.glowStringColor();
 
@@ -454,6 +458,8 @@ Pointer.prototype.draw = function() {
 
 
 Pointer.prototype.render = function() {
+    // console.log("pointer render");
+
     // pulse
     var osc = 0.5 + Math.sin(this.tick / 13);
     this.radius = this.baseRadius.min + this.id + ((this.baseRadius.max - this.baseRadius.min) * osc);
@@ -507,6 +513,8 @@ Input.prototype.create = function() {
 
 
 Input.prototype.render = function() {
+    // console.log("input render");
+
     var p = this.pointers;
 
     for (var i = 0; i < POINTER_TRAIL_MAX; i++) {
@@ -611,11 +619,10 @@ StringInstrument.prototype.renderLeapMotion = function() {
 
 
 StringInstrument.prototype.render = function() {
+    // console.log("stringInstrument render");
+
     // clear screen
     clearRect();
-
-    if (_screenID > SCREEN_ID_STRINGS)
-        return;
 
     var that = this;
 
@@ -717,6 +724,8 @@ Button.prototype.press = function() {
 
 // render/draw a button on the canvas
 Button.prototype.render = function() {
+    // console.log("button render");
+
     this.hovered();
 
     ctx.beginPath();
@@ -733,9 +742,8 @@ Button.prototype.render = function() {
 
 
 
-function Screen(id, buttonNum) {
+function Screen(id) {
     this.id = id;
-    this.buttonNum = buttonNum;
     this.buttons = [];
 
     this.listeners();
@@ -746,11 +754,11 @@ function Screen(id, buttonNum) {
 
 
 Screen.prototype.create = function(arg) {
-    for (var i = 4, j = 0; i < arg.length; i++)
+    for (var i = 3, j = 0; i < arg.length; i++)
     {
         // id, x, y, width, height, text, fillStyle
         // buttons share same size with each other
-        var b = new Button(j, arg[i], arg[++i], arg[2], arg[3], arg[++i], "rgba(255,0,0,1)");
+        var b = new Button(j, arg[i], arg[++i], arg[1], arg[2], arg[++i], "rgba(255,0,0,1)");
         j++;
 
         this.buttons.push(b);
@@ -759,6 +767,8 @@ Screen.prototype.create = function(arg) {
 
 
 Screen.prototype.render = function() {
+    // console.log("screen render");
+
     for (var i = 0; i < this.buttons.length; i++) {
         this.buttons[i].render();
     }
@@ -803,6 +813,32 @@ Screen.prototype.collisionRect = function(x, y) {
 };
 
 
+Screen.prototype.position = function() {
+    var offset = this.offset();
+    this.positionTop = Math.floor(offset.top);
+    this.positionLeft = Math.floor(offset.left);
+};
+
+
+Screen.prototype.offset = function() {
+    var _x, _y,
+        el = canvas;
+
+    if (typeof el.getBoundingClientRect !== "undefined") {
+        return el.getBoundingClientRect();
+    } else {
+        _x = 0;
+        _y = 0;
+        while(el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+            _x += el.offsetLeft;
+            _y += el.offsetTop;
+            el = el.offsetParent;
+        }
+        return { top: _y - window.scrollY, left: _x - window.scrollX };
+    }
+};
+
+
 // browser events
 Screen.prototype.listeners = function() {
     var that = this;
@@ -819,7 +855,7 @@ Screen.prototype.listeners = function() {
         var clickX  = e.clientX,
             clickY  = e.clientY;
 
-            that.collisionRect(clickX, clickY);
+        that.collisionRect(clickX, clickY);
     }, false);
 };
 
@@ -858,8 +894,8 @@ Menu.prototype.createScreens = function() {
         text1: "START"
     };
 
-    // id, button amount, width, height, x, y, text
-    var s = new Screen(0, 1,
+    // id, width, height, x, y, text
+    var s = new Screen(0,
         screenLayout.w, screenLayout.h,
         screenLayout.x1, screenLayout.y1,
         screenLayout.text1);
@@ -871,6 +907,8 @@ Menu.prototype.createScreens = function() {
 
 // render the buttons in our array on screen
 Menu.prototype.render = function() {
+    // console.log("menu render");
+
     var that = this;
 
     // loop
@@ -1028,6 +1066,15 @@ Game.prototype.renderLeapMotion = function() {
 };
 
 
+Game.prototype.removeText = function(id) {
+    var t = document.getElementById(id);
+
+    if (t) {
+        t.style.display = "none";
+    }
+};
+
+
 Game.prototype.startMenu = function() {
     this.menu = new Menu(0, 0, canvas.width, canvas.height);
 };
@@ -1039,21 +1086,32 @@ Game.prototype.startGame = function() {
     iosocket.emit('server:start-recording', 'record!!');
 };
 
+
 Game.prototype.startCountdown = function() {
+    this.removeText('menu-text');
     this.countdown = new Countdown(Date.now(), 0, 3);
 };
 
+
 Game.prototype.gameOver = function(code) {
-    _screenID++;
     this.clr.disconnect();
-    clearRect();
-    this.harp.stage.clearScreen();
+    _screenID++;
 
-    ctx.font = "120px Arial";
-    var id = "Uw ID: " +  code;
-    ctx.fillText(id, canvas.width/2, canvas.height/2);
+    // show session ID
+    var t = document.getElementById('id-display');
+    if (t) {
+        t.innerHTML = '<span class="id-title">UW CODE </span><br><span>' + code + '</span>';
+    }
 
+    // show info text
+    t = document.getElementById('id-text');
+    if (t) {
+        t.style.display = "block";
+    }
+    
     setTimeout(this.doOver, 10000);
+
+    console.log("Game Over");
 };
 
 Game.prototype.doOver = function() {
@@ -1062,6 +1120,15 @@ Game.prototype.doOver = function() {
 
 
 Game.prototype.render = function() {
+    // console.log("game render");
+
+    // keep screen clear
+    if (_screenID == SCREEN_ID_GAME_OVER) {
+        this.harp.stage.clearScreen();
+        console.log("Done");
+        return;
+    }
+
     var that = this;
 
     // loop

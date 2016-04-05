@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,900,900italic);
+
 * {
     padding: 0;
     margin: 0;
@@ -6,10 +8,12 @@
 body {
     background-color: rgb(16, 16, 16);
     height: 100%;
-    color: rgba(149, 255, 20, 0);
+    color: rgba(16, 16, 16, 0);
+    font-family: roboto, serif;
+    font-weight: 300;
     text-align: center;
     font-size: 24px;
-    font-family: 'Helvetica',sans-serif;
+    color: white;
 }
 
 #wrapper {
@@ -28,7 +32,7 @@ body {
     user-select: none;
 }
 
-#strings {
+#canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -64,21 +68,48 @@ body {
     left: 59.7%;
 }
 
-#sData {
-    float: left;
-    margin-left: 100px;
-    margin-right: auto;
-    width: 470px;
+.text-wrapper {
+    width: 80%;
+    margin: 50px auto;
+    overflow: hidden;
 }
 
-h2 {
+article {
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+}
+
+#id-text > article {
+    width: 70%;
     text-align: center;
 }
 
-#btnHolder {
-    text-align: center;
+article:not(:last-child) {
+    margin-right: 40px;
 }
 
-label {
-    color: white;
+h1 {
+    font-family: roboto, serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+#id-display {
+    margin-top: 50px;
+
+    font-size: 120px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 100px;
+
+    background-color: rgba(245, 245, 245, 0.07);
+    padding-bottom: 40px;
+}
+
+.id-title {
+    font-size: 60px;
+    font-weight: 400;
 }
