@@ -24,7 +24,7 @@ h1, .tlt span {
 .tlt {
     overflow: hidden;
     padding: 2rem 0;
-    height: 10rem;
+    height: 11rem;
 }
 
 .share-buttons {
@@ -115,6 +115,12 @@ img {
     .navbar {
         float: right;
         padding-left: 300px;
+        margin-top: 0%;
+    }
+
+    .container2 {
+        position: absolute;
+        margin-top: 19% !important;
     }
 
     h1 {
@@ -128,16 +134,48 @@ img {
         letter-spacing: 0.25em;
     }
 
-    .tlt {
+    .row2 {
+        height: 750px !important;
+    }
+
+    .tlt, .tlt2 {
         overflow: hidden;
         padding: 2rem 0;
         height: 10rem;
         margin-left: 13%;
     }
 
-    #wrapper {
+    #wrapper, #wrapper2 {
         top: 35%;
         margin-left: -60px !important;
+    }
+
+    .col-sm-4 {
+        padding: 0 16px !important;
+    }
+
+    svg #title {
+        font-size: 23px !important;
+    }
+
+    #first #base {
+        height: 30% !important;
+    }
+
+    #second #base {
+        height: 30% !important;
+    }
+
+    #third #base {
+        height: 30% !important;
+    }
+
+    .play_text {
+        margin-top: -31% !important;
+    }
+
+    #wrapper2 {
+        margin-top: -12% !important;
     }
 
     #code {
@@ -489,9 +527,11 @@ a:hover {
 
 /*einde info pagina*/
 
-.container {
+.container2 {
     text-align: justify;
-    margin-top: 10%;
+    margin-top: 5%;
+    margin-left: 19%;
+    margin-left: 15%;
 
 }
 
@@ -550,17 +590,39 @@ svg #subtitle {
     letter-spacing: 2px;
 }
 
-.row {
+.row2 {
     padding: 20px;
+    margin-top: 12%;
+    width: 86%;
+    height: 532px;
     background-color: rgba(10, 24, 51, 0.48);
-
+    box-shadow: 5px 7px 2px #111113;
+    /*box-shadow: 0 4px 50px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.43);*/
 }
-
 
 .col-sm-4 {
     width: 33.33333333%;
     padding: 0 34px;
 }
+
+#wrapper2 {
+    position: absolute;
+    margin: auto;
+    right: 5%;
+    width: 90%;
+    text-align: center;
+}
+
+.tlt2 {
+    color: white;
+    font-size: 60px;
+    text-shadow: 4px 4px #030000;
+    letter-spacing: 0.25em;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+
 
 
 
