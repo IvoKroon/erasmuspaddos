@@ -984,8 +984,8 @@ function Game() {
 
 Game.prototype.createInput = function() {
     for (var i = 0; i < HANDS_NUM_MAX; i++) {
-        var x = -50 + canvas.width/2 + i * 100;
-        var y = 100;
+        var x = canvas.width/2 - 300;
+        var y = canvas.height/2;
 
         var input = new Input(x, y);
         this.input.push(input);
@@ -1020,7 +1020,8 @@ Game.prototype.renderLeapMotion = function() {
                 that.input[i].x = handPos.x;
                 that.input[i].y = handPos.y;
 
-                var b = that.menu.screens[_screenID].collisionRect(that.input[i].x, that.input[i].y);
+                // check if we hit something
+                that.menu.screens[_screenID].collisionRect(that.input[i].x, that.input[i].y);
             }
         }
     });
