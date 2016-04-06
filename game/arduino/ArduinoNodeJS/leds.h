@@ -9,8 +9,13 @@ class Led
     Led(int pin);
     void turnOn();
     void turnOff();
+    void setGlowStr(int str);
+    int getPin();
     bool _isOn;
     unsigned long _timer;
+    int _glowStr;
+    bool _hasReachedMaxGlow = false;
+    unsigned long _glowPrevTime;
 
   private:
     int _pin;
@@ -24,18 +29,33 @@ Led::Led(int pin)
   _pin = pin;
   _isOn = false;
   _timer = millis();
+  _glowStr = 0;
+}
+
+int Led::getPin() {
+  return _pin;
+}
+
+void Led::setGlowStr(int str) 
+{
+  _glowStr = str;
+  analogWrite(_pin, _glowStr);
 }
 
 void Led::turnOn() 
 {
-  digitalWrite(_pin, HIGH);
+  analogWrite(_pin, 1);
+    
   _timer = millis();
+  _hasReachedMaxGlow = false;
   _isOn = true;
 }
 
 void Led::turnOff() 
 {
-  digitalWrite(_pin, LOW);
+  analogWrite(_pin, 0);
+  _glowStr = 0;
+  _hasReachedMaxGlow = false;
   _isOn = false;
 }
 

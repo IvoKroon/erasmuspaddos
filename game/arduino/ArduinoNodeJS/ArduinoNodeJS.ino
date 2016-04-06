@@ -1,10 +1,13 @@
 #include "leds.h"
 
+#define LEDS_AMOUNT    16
+#define LEDS_GLOW_TIME 1000
+
 int recVal = -1;
 String val = "";
-const int LEDS_AMOUNT = 16;
 Led* ledsArray[LEDS_AMOUNT];
 char* ledsCharArray[LEDS_AMOUNT];
+unsigned long prevTime = millis();
 
 void setup() 
 {
@@ -54,10 +57,38 @@ void loop()
         
     unsigned long curTime = millis();
     unsigned long diff = curTime - l->_timer;
-    
-    // turn off LED after some time
-    if (diff > 2500) {
-      l->turnOff();
+
+    // set glow strength
+    if (l->getPin() > 13) {
+      l->setGlowStr(255);
+
+      // turn off LED after some time
+      if (diff > LEDS_GLOW_TIME) {
+        l->turnOff();
+      }
+    } else {
+      if (curTime - l->_glowPrevTime > 10) {
+        int str;
+          
+        if (!l->_hasReachedMaxGlow) {
+          str = l->_glowStr + 5;
+          
+          if (str >= 255) {
+            str = 255;
+            l->_hasReachedMaxGlow = true;
+          }
+        } else {
+          str = l->_glowStr - 5;
+          
+          if (str < 0) {
+            str = 0;
+            l->turnOff();
+          }
+        }
+
+        l->setGlowStr(str);
+        l->_glowPrevTime = curTime;
+      }
     }
   } 
 
