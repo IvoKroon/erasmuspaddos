@@ -25,6 +25,7 @@ require('./server');
 // listen for socket connection
 io.on('connection', function (socket) {
   require('./socket-connection.js')(socket);
+  require('./server')(socket)
 });
 
 // set soundcloud strategy

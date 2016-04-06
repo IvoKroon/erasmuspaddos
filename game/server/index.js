@@ -15,8 +15,7 @@ serialPort.on('open', function() {
     console.log('open serial communication');
 });
 
-socket.on('connection', function(socket)
-{
+module.exports = function(socket) {
     socket.on('stringtouched', function(data)
     {
         var found = values.filter(function(val) {
@@ -32,7 +31,8 @@ socket.on('connection', function(socket)
         }
 
     });
-});
+}
+
 
 function send(data) {
     // delete values[values.indexOf(data)];
