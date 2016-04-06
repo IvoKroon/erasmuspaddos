@@ -19,6 +19,9 @@ global.ACCESS_TOKEN = '';
 // require database connection
 require('./db-connection');
 
+// arduino
+require('./server');
+
 // listen for socket connection
 io.on('connection', function (socket) {
   require('./socket-connection.js')(socket);
