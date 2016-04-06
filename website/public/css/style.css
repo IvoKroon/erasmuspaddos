@@ -118,11 +118,6 @@ img {
         margin-top: 0%;
     }
 
-    .container2 {
-        position: absolute;
-        margin-top: 19% !important;
-    }
-
     h1 {
         font-size: 50px;
     }
@@ -136,6 +131,11 @@ img {
 
     .row2 {
         height: 750px !important;
+    }
+
+    .container2 {
+        position: absolute;
+        margin-top: 19% !important;
     }
 
     .tlt, .tlt2 {
@@ -186,6 +186,10 @@ img {
         margin-top: 8% !important;
         margin-left: -5% !important;
     }
+
+    #title2 {
+        margin-left: -11% !important;
+    }
 }
 
 @media only screen and (max-width: 800px) {
@@ -224,6 +228,29 @@ img {
 
     .container {
         margin-top: 5% !important;
+    }
+
+    .row2 {
+        margin-top: 15% !important;
+        width: 100% !important;
+        margin-left: -8% !important;
+        height: 874px !important;
+    }
+
+    svg #title {
+        font-size: 21px !important;
+    }
+
+    .tlt2 {
+        font-size: 51px !important;
+    }
+
+    .container2 {
+        position: absolute;
+    }
+
+    svg {
+        margin-bottom: -30% !important;
     }
 }
 
@@ -270,6 +297,35 @@ img {
     #wrapperCl {
         top: 25% !important;
     }
+
+    #title2 {
+        margin-top: -19%;
+        margin-left: -11%;
+    }
+
+    .row2 {
+        margin-top: 25% !important;
+        width: 100% !important;
+        margin-left: -8% !important;
+        height: 874px !important;
+    }
+
+    svg #title {
+        font-size: 21px !important;
+    }
+
+    .tlt2 {
+        font-size: 51px !important;
+    }
+
+    .container2 {
+        position: absolute;
+    }
+
+    svg {
+        margin-bottom: -30% !important;
+    }
+
 }
 
 @media only screen and (max-width: 600px) {
@@ -289,6 +345,52 @@ img {
 
     #wrapperCl {
         top: 18% !important;
+    }
+
+    .tlt2 {
+        font-size: 40px !important;
+    }
+
+    #wrapper2 {
+        margin-top: -24% !important;
+    }
+
+    .container2 {
+        margin-top: 5% !important;
+    }
+
+    .col-sm-4 {
+        width: 93.3333% !important;
+        margin-top: 40% !important;
+    }
+
+    .text {
+        float: left !important;
+        margin-top: -38% !important;
+    }
+
+    #first {
+        width: 136% !important;
+    }
+
+    #second {
+        width: 136% !important;
+    }
+
+    #third {
+        width: 136% !important;
+    }
+
+    .text {
+        text-align: center;
+    }
+
+    .row2 {
+        height: 1019px !important;
+    }
+
+    svg #title {
+        font-size: 30px !important;
     }
 }
 
@@ -337,6 +439,51 @@ img {
         margin-top: 5% !important;
         margin-left: -10% !important;
     }
+
+    .tlt2 {
+        font-size: 30px !important;
+        margin-top: 27%;
+    }
+
+    .col-sm-4 {
+        width: 93.3333% !important;
+        margin-top: 30% !important;
+    }
+
+    .text {
+        float: left !important;
+        margin-top: -38% !important;
+    }
+
+    #first {
+        width: 103% !important;
+    }
+
+    #second {
+        width: 103% !important;
+        margin-top: 5% !important;
+    }
+
+    #third {
+        width: 103% !important;
+        margin-top: 5% !important;
+    }
+
+    .text {
+        text-align: center;
+    }
+
+    .row2 {
+        height: 1219px !important;
+    }
+
+    svg #title {
+        font-size: 30px !important;
+    }
+
+    .play_text {
+        margin-top: -24% !important;
+    }
 }
 
 @media only screen and (max-width: 320px) {
@@ -382,6 +529,69 @@ img {
 
     #wrapperCl {
         top: 12% !important;
+    }
+
+    .tlt2 {
+        font-size: 25px !important;
+    }
+
+    #wrapper2 {
+        margin-top: -24% !important;
+    }
+
+    .tlt2 {
+        font-size: 20px !important;
+        margin-top: 3%;
+    }
+
+    .col-sm-4 {
+        width: 93.3333% !important;
+        margin-top: 30% !important;
+    }
+
+    .text {
+        float: left !important;
+        margin-top: -38% !important;
+    }
+
+    #first {
+        width: 103% !important;
+        margin-bottom: -49% !important;
+
+    }
+
+    #second {
+        width: 103% !important;
+        margin-top: 5% !important;
+        margin-bottom: -49% !important;
+
+    }
+
+    #third {
+        width: 103% !important;
+        margin-top: 5% !important;
+        margin-bottom: -49% !important;
+
+    }
+
+    .text {
+        text-align: center;
+    }
+
+    .row2 {
+        height: 2019px !important;
+    }
+
+    svg #title {
+        font-size: 22px !important;
+    }
+
+    .play_text {
+        margin-top: -24% !important;
+    }
+
+    .container2 {
+        margin-top: 16% !important;
     }
 }
 
@@ -620,15 +830,3 @@ svg #subtitle {
     letter-spacing: 0.25em;
     font-family: 'Roboto', sans-serif;
 }
-
-
-
-
-
-
-
-
-
-
-
-
